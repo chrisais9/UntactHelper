@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">비대리</string>
+    <string name="bottom_nav_home">홈</string>
+    <string name="bottom_nav_lecture">강의</string>
+</resources>
