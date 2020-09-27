@@ -39,16 +39,21 @@ class HomeFragment : BaseFragment() {
 
     private fun establishEcampusConnection() {
 
-        val userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15"
+        val userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_16_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36"
 
         addToDisposable(
             Single.fromCallable {
                 // 쿠키 받아오기
                 Jsoup.connect(GlobalConstants.ECAMPUS_LOGIN_URL)
                     .userAgent(userAgent)
+                    .data("Referer", "https://ecampus.kookmin.ac.kr/login.php")
+                    .data("Origin", "https://ecampus.kookmin.ac.kr")
+                    .data("Content-Type", "application/x-www-form-urlencoded")
+                    .data("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
                     .method(Connection.Method.GET)
                     .execute()
             }.flatMap {
+                Log.d(TAG, it.cookies().toString())
                 Single.fromCallable {
                     val form = hashMapOf(
                         "username" to BuildConfig.ecampusID,
@@ -57,56 +62,26 @@ class HomeFragment : BaseFragment() {
 
                     Jsoup.connect(GlobalConstants.ECAMPUS_LOGIN_URL)
                         .userAgent(userAgent)
+                        .data("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                        .data("Host", "ecampus.kookmin.ac.kr")
+                        .data("Accept-Language", "ko-kr")
+                        .data("Accept-Encoding", "gzip, deflate, br")
+                        .data("Connection", "keep-alive")
                         .data(form)
                         .cookies(it.cookies())
                         .method(Connection.Method.POST)
-                        .execute()
+                        .post()
                 }
             }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Log.d(TAG, it.body())
-
-//                    Log.d(TAG, it.body().substring(0,10))
+                    Log.d(TAG, it.html())
                 },{
                     Log.d(TAG, it.localizedMessage)
                 })
 
         )
-//        addToDisposable(
-//            Single.fromCallable {
-//                Jsoup.connect(GlobalConstants.ECAMPUS_LOGIN_URL)
-//                    .header("Referer", "https://ecampus.kookmin.ac.kr/login.php")
-//                    .header("Origin","https://ecampus.kookmin.ac.kr")
-//                    .header("Accept-Language","ko-kr")
-//                    .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-//                    .header("User-Agent", userAgent)
-//                    .header("Accept-Encoding","gzip, deflate, br")
-//                    .method(Connection.Method.GET)
-//                    .execute()
-//            }.subscribeOn(Schedulers.io())
-//                .flatMap {
-//                    Single.fromCallable {
-//                        val loginPageCookies = it.cookies()
-//                        val loginPageDocument = it.parse()
-//
-//                        val form = hashMapOf(
-//                            "username" to "20191551",
-//                            "password" to "@hmk100300",
-//                            "rememberusename" to loginPageDocument.select("rememberusename").`val`()
-//                        )
-//                        it
-//                    }
-//                }
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe({
-//                    Log.d(TAG, it.statusCode().toString())
-//                },{
-//
-//                })
-//
-//        )
     }
 
     private fun initTimeTable() {
