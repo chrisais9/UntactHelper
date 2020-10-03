@@ -34,7 +34,7 @@ class HomeFragment : BaseFragment() {
 
     override fun initLayoutAttributes() {
         initTimeTable()
-        establishEcampusConnection()
+//        establishEcampusConnection()
     }
 
     private fun establishEcampusConnection() {
@@ -69,14 +69,16 @@ class HomeFragment : BaseFragment() {
                         .data("Connection", "keep-alive")
                         .data(form)
                         .cookies(it.cookies())
-                        .method(Connection.Method.POST)
                         .post()
                 }
             }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Log.d(TAG, it.html())
+                    val courses = it.body().select(".progress_courses .course_lists .my-course-lists")
+                    courses.select("div.course-title").forEach {
+                        Log.d(TAG, it.html())
+                    }
                 },{
                     Log.d(TAG, it.localizedMessage)
                 })
