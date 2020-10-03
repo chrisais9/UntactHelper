@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".common.ui.SplashActivity"
+        <activity android:name=".common.ui.activity.SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +21,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".common.ui.MainActivity"/>
+        <activity android:name=".common.ui.activity.MainActivity"/>
+        <activity android:name=".common.ui.activity.LoginActivity" />
     </application>
 
 </manifest>

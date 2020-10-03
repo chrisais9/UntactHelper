@@ -1,4 +1,4 @@
-package kr.koohyongmo.untacthelper.common.ui
+package kr.koohyongmo.untacthelper.common.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -28,7 +28,7 @@ class SplashActivity: BaseActivity() {
     override fun initLayoutAttributes() {
 
         Handler().postDelayed({
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }, 2000)
     }

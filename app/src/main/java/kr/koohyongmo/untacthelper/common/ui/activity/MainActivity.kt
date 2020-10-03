@@ -1,4 +1,4 @@
-package kr.koohyongmo.untacthelper.common.ui
+package kr.koohyongmo.untacthelper.common.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
