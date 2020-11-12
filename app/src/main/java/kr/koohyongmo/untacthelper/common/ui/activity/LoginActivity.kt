@@ -1,5 +1,7 @@
 package kr.koohyongmo.untacthelper.common.ui.activity
 
+import android.content.Intent
+import android.text.InputType
 import android.util.Log
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -21,6 +23,9 @@ class LoginActivity: BaseActivity() {
     private val loginPreference by lazy { LoginPreference.getInstance(this) }
 
     override fun initLayoutAttributes() {
+
+        et_password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+
         val ecampusService = JsoupEcampusService()
         btn_login.setOnClickListener {
             addToDisposable(
@@ -34,6 +39,8 @@ class LoginActivity: BaseActivity() {
                         loginPreference.userPassword = et_id.text.toString()
                         loginPreference.userCookie = it.cookies()
                         Log.d(TAG, loginPreference.userCookie.toString())
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
                     },{
                         Log.d(TAG, it.localizedMessage)
                     })
