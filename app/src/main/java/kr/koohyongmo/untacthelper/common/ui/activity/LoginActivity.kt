@@ -20,7 +20,7 @@ class LoginActivity: BaseActivity() {
     override val layoutToolbarID: Int
         get() = 0
 
-    private val loginPreference by lazy { LoginPreference.getInstance(this) }
+    private val loginPreference by lazy { LoginPreference.getInstance() }
 
     override fun initLayoutAttributes() {
 

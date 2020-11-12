@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kr.koohyongmo.untacthelper.common.AppApplication
 
 
 /**
@@ -18,8 +19,8 @@ class LoginPreference private constructor(context: Context){
         @SuppressLint("StaticFieldLeak")
         private var instance: LoginPreference? = null
 
-        fun getInstance(context: Context): LoginPreference {
-            if (instance == null) instance = LoginPreference(context)
+        fun getInstance(): LoginPreference {
+            if (instance == null) instance = LoginPreference(AppApplication.instance.applicationContext)
             return instance as LoginPreference
         }
 

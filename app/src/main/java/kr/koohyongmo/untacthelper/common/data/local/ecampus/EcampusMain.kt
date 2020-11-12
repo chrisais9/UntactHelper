@@ -10,9 +10,12 @@ data class EcampusMain(
 data class Class(
     val title: String, // 과목명
     val professor: String? = null, // 교수명
-    val classDivision: String? = null // 분반 번호
+    val classDivision: String? = null, // 분반 번호
+    val week: List<Week>? = null
 )
-
+data class Week(
+    val lectures: List<Lecture>? = null // 주차별 수업들
+)
 data class Lecture(
     val title: String,
     val type: LectureType,
