@@ -3,6 +3,7 @@ package kr.koohyongmo.untacthelper.common.ui.activity
 import android.content.Intent
 import android.text.InputType
 import android.util.Log
+import android.widget.Toast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
@@ -14,7 +15,7 @@ import kr.koohyongmo.untacthelper.common.ui.base.BaseActivity
 /**
  * Created by KooHyongMo on 2020/10/03
  */
-class LoginActivity: BaseActivity() {
+class LoginActivity : BaseActivity() {
     override val layoutResourceID: Int
         get() = R.layout.activity_login
     override val layoutToolbarID: Int
@@ -23,10 +24,10 @@ class LoginActivity: BaseActivity() {
     private val loginPreference by lazy { LoginPreference.getInstance() }
 
     override fun initLayoutAttributes() {
+        val ecampusService = JsoupEcampusService()
 
         et_password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
 
-        val ecampusService = JsoupEcampusService()
         btn_login.setOnClickListener {
             addToDisposable(
                 ecampusService.requestLogin(
@@ -38,14 +39,25 @@ class LoginActivity: BaseActivity() {
                         loginPreference.userID = et_id.text.toString()
                         loginPreference.userPassword = et_id.text.toString()
                         loginPreference.userCookie = it.cookies()
-                        Log.d(TAG, loginPreference.userCookie.toString())
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
-                    },{
+                        onFinishLogin()
+                    }, {
+                        Toast.makeText(this, "아이디 / 비밀번호를 확인해주세요", Toast.LENGTH_SHORT).show()
                         Log.d(TAG, it.localizedMessage)
                     })
             )
         }
+        if (loginPreference.userID.isNotEmpty()
+            && loginPreference.userPassword.isNotEmpty()) {
+            et_id.setText(loginPreference.userID)
+            et_password.setText(loginPreference.userPassword)
+            btn_login.performClick()
+        }
+    }
+
+    private fun onFinishLogin() {
+        Log.d(TAG, loginPreference.userCookie.toString())
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     companion object {
