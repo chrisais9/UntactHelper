@@ -2,13 +2,19 @@ package kr.koohyongmo.untacthelper.home.ui.fragment
 
 import android.app.ProgressDialog
 import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.nitrico.lastadapter.LastAdapter
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_home.*
+import kr.koohyongmo.untacthelper.BR
 import kr.koohyongmo.untacthelper.R
 import kr.koohyongmo.untacthelper.common.GlobalConstants
 import kr.koohyongmo.untacthelper.common.data.local.sharedpreference.LoginPreference
 import kr.koohyongmo.untacthelper.common.ui.base.BaseFragment
+import kr.koohyongmo.untacthelper.databinding.ItemHomeTodoBinding
+import kr.koohyongmo.untacthelper.home.viewmodel.TodoViewModel
 import org.jsoup.Jsoup
 
 /**
@@ -31,9 +37,12 @@ class HomeFragment : BaseFragment() {
             setTitle("데이터 로드중")
         }
     }
-
-
+    val todoList = emptyList<Any>()
+    val todoAdapter by lazy {
+        LastAdapter(todoList, BR.listContent)
+    }
     override fun initLayoutAttributes() {
+        initRecyclerView()
         fetchDataFromEcampus()
     }
 
@@ -70,6 +79,15 @@ class HomeFragment : BaseFragment() {
                     Log.d(TAG, it.localizedMessage)
                 })
         )
+    }
+
+    private fun initRecyclerView() {
+        rv_todo.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        todoAdapter
+            .map<TodoViewModel,ItemHomeTodoBinding>(R.layout.item_home_todo) {
+
+            }
+            .into(rv_todo)
     }
 
 }
