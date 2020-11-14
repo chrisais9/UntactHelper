@@ -1,5 +1,6 @@
 package kr.koohyongmo.untacthelper.common.ui.activity
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.text.InputType
 import android.util.Log
@@ -23,12 +24,19 @@ class LoginActivity : BaseActivity() {
 
     private val loginPreference by lazy { LoginPreference.getInstance() }
 
+    private val progressDialog by lazy {
+        ProgressDialog(this).apply {
+            setTitle("로그인중...")
+        }
+    }
+
     override fun initLayoutAttributes() {
         val ecampusService = JsoupEcampusService()
 
         et_password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
 
         btn_login.setOnClickListener {
+            progressDialog.show()
             addToDisposable(
                 ecampusService.requestLogin(
                     et_id.text.toString(),
@@ -36,11 +44,13 @@ class LoginActivity : BaseActivity() {
                 ).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
+                        progressDialog.dismiss()
                         loginPreference.userID = et_id.text.toString()
                         loginPreference.userPassword = et_id.text.toString()
                         loginPreference.userCookie = it.cookies()
                         onFinishLogin()
                     }, {
+                        progressDialog.dismiss()
                         Toast.makeText(this, "아이디 / 비밀번호를 확인해주세요", Toast.LENGTH_SHORT).show()
                         Log.d(TAG, it.localizedMessage)
                     })
