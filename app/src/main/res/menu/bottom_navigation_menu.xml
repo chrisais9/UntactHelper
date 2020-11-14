@@ -9,4 +9,10 @@
         android:enabled="true"
         android:icon="@drawable/ic_lecture"
         android:title="@string/bottom_nav_lecture"/>
+
+    <item
+        android:id="@+id/nav_timetable"
+        android:enabled="true"
+        android:icon="@drawable/ic_timetable"
+        android:title="@string/bottom_nav_timetable"/>
 </menu>
