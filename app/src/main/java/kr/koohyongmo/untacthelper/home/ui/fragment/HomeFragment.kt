@@ -2,18 +2,13 @@ package kr.koohyongmo.untacthelper.home.ui.fragment
 
 import android.app.ProgressDialog
 import android.util.Log
-import com.github.tlaabs.timetableview.Schedule
-import com.github.tlaabs.timetableview.Time
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_home.*
-import kr.koohyongmo.untacthelper.BuildConfig
 import kr.koohyongmo.untacthelper.R
 import kr.koohyongmo.untacthelper.common.GlobalConstants
 import kr.koohyongmo.untacthelper.common.data.local.sharedpreference.LoginPreference
 import kr.koohyongmo.untacthelper.common.ui.base.BaseFragment
-import org.jsoup.Connection
 import org.jsoup.Jsoup
 
 /**
@@ -39,7 +34,6 @@ class HomeFragment : BaseFragment() {
 
 
     override fun initLayoutAttributes() {
-        initTimeTable()
         fetchDataFromEcampus()
     }
 
@@ -72,23 +66,10 @@ class HomeFragment : BaseFragment() {
                     courses.select("div.course-title").forEach {
                         Log.d(TAG, it.html())
                     }
-                },{
+                }, {
                     Log.d(TAG, it.localizedMessage)
                 })
         )
-    }
-
-    private fun initTimeTable() {
-        val schedules = arrayListOf(
-            Schedule().apply {
-                classTitle = "Data Structure" // sets subject
-                classPlace = "IT-601" // sets place
-                professorName = "Won Kim" // sets professor
-                startTime = Time(10, 0) // sets the beginning of class time (hour,minute)
-                endTime = Time(13, 30) // sets the end of class time (hour,minute)
-            }
-        )
-        timetable.add(schedules)
     }
 
 }

@@ -8,6 +8,7 @@ import com.google.android.material.bottomnavigation.LabelVisibilityMode
 import kotlinx.android.synthetic.main.activity_main.*
 import kr.koohyongmo.untacthelper.R
 import kr.koohyongmo.untacthelper.home.ui.fragment.HomeFragment
+import kr.koohyongmo.untacthelper.timetable.ui.fragment.TimetableFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -18,6 +19,9 @@ class MainActivity : AppCompatActivity() {
 
         initBottomNavigationView()
     }
+
+    val homeFragment = HomeFragment()
+    val timetableFragment = TimetableFragment()
 
     private fun initBottomNavigationView() {
         // 제목 항상 보이도록
@@ -30,8 +34,9 @@ class MainActivity : AppCompatActivity() {
         // 탭 눌릴때 마다 해당 fragment로 화면 설정
         bottom_navigation.setOnNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.nav_home -> setCurrentFragmentTab(HomeFragment())
+                R.id.nav_home -> setCurrentFragmentTab(homeFragment)
                 R.id.nav_lecture -> setCurrentFragmentTab(Fragment())
+                R.id.nav_timetable -> setCurrentFragmentTab(timetableFragment)
                 else -> throw Exception("Not defined id")
             }
             true

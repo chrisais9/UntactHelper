@@ -31,19 +31,6 @@
                 android:text="@string/app_name"/>
 
         </androidx.appcompat.widget.Toolbar>
-
-
-
     </com.google.android.material.appbar.AppBarLayout>
-
-    <com.github.tlaabs.timetableview.TimetableView
-        android:id="@+id/timetable"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:column_count="6"
-        app:layout_constraintTop_toTopOf="parent"
-        app:header_title="@array/time_table_header_title"
-        android:paddingTop="?attr/actionBarSize"
-        app:row_count="12" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
