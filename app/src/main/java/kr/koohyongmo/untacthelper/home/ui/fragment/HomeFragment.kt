@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kr.koohyongmo.untacthelper.BR
 import kr.koohyongmo.untacthelper.R
 import kr.koohyongmo.untacthelper.common.GlobalConstants
+import kr.koohyongmo.untacthelper.common.data.local.ecampus.LectureType
 import kr.koohyongmo.untacthelper.common.data.local.sharedpreference.LoginPreference
 import kr.koohyongmo.untacthelper.common.ui.base.BaseFragment
 import kr.koohyongmo.untacthelper.databinding.ItemHomeTodoBinding
@@ -37,13 +38,14 @@ class HomeFragment : BaseFragment() {
             setTitle("데이터 로드중")
         }
     }
-    val todoList = emptyList<Any>()
-    val todoAdapter by lazy {
+    private var todoList = ArrayList<TodoViewModel>()
+    private val todoAdapter by lazy {
         LastAdapter(todoList, BR.listContent)
     }
     override fun initLayoutAttributes() {
-        initRecyclerView()
+        initTodo()
         fetchDataFromEcampus()
+        initTodoItem()
     }
 
     private fun fetchDataFromEcampus() {
@@ -81,13 +83,41 @@ class HomeFragment : BaseFragment() {
         )
     }
 
-    private fun initRecyclerView() {
-        rv_todo.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+    private fun initTodo() {
+        rv_todo.layoutManager = LinearLayoutManager(requireContext())
         todoAdapter
             .map<TodoViewModel,ItemHomeTodoBinding>(R.layout.item_home_todo) {
-
+                onBind {
+                    Log.d(TAG, "onBind")
+                }
             }
             .into(rv_todo)
+    }
+
+    private fun initTodoItem() {
+        todoList.addAll(
+            listOf(
+                TodoViewModel(
+                    "11:10",
+                    "응용통계학",
+                    LectureType.TYPE_VIDEO,
+                    "[강의동영상] 11장 범주형 자료"
+                ),
+                TodoViewModel(
+                    "13:50",
+                    "컴퓨터구조",
+                    LectureType.TYPE_VIDEO,
+                    "11/06 화상강의"
+                ),
+                TodoViewModel(
+                    "23:59",
+                    "이산수학",
+                    LectureType.TYPE_VIDEO,
+                    "중간고사 대체과제"
+                )
+            )
+        )
+        todoAdapter.notifyDataSetChanged()
     }
 
 }
