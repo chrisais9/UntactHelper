@@ -32,7 +32,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:background="@android:color/darker_gray"
             app:layout_constraintStart_toEndOf="@id/tv_time"
-            app:layout_constraintBottom_toBottomOf="@id/tv_description"/>
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             tools:text="응용통계학"
@@ -51,6 +51,8 @@
             android:id="@+id/iv_type"
             app:layout_constraintTop_toBottomOf="@id/tv_title"
             app:layout_constraintStart_toStartOf="@id/tv_title"
+            android:layout_marginBottom="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:src="@drawable/ic_main_logo"
             android:layout_width="20dp"
             android:layout_height="20dp"/>

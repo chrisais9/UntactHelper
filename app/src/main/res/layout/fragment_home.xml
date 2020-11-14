@@ -39,7 +39,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="?attr/actionBarSize"
             app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
             app:cardElevation="4dp"
@@ -51,13 +51,16 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:background="@android:color/darker_gray"
                     android:id="@+id/tv_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="24sp"
                     android:text="오늘의 할 일" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_todo"
+                    android:padding="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
 
