@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
@@ -28,6 +29,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -53,5 +57,9 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.13.1'
 
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    // Recycler View adapter
+    implementation 'com.github.nitrico.lastadapter:lastadapter:2.3.0'
+    kapt 'com.android.databinding:compiler:GRADLE_PLUGIN_VERSION'
 
 }
