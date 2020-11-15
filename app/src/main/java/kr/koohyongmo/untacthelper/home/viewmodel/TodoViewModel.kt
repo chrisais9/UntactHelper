@@ -7,8 +7,8 @@ import kr.koohyongmo.untacthelper.common.data.local.ecampus.LectureType
  */
 data class TodoViewModel(
     val time: String,
-    val lectureTitle: String,
-    val lectureType: LectureType,
+    val classTitle: String,
+    val contentType: LectureType,
     val contentTitle: String,
     val contentURL: String
 )

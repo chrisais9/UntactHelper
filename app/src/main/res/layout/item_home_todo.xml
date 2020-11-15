@@ -42,7 +42,7 @@
             app:layout_constraintTop_toTopOf="@id/tv_time"
             app:layout_constraintStart_toEndOf="@id/divider"
             android:id="@+id/tv_title"
-            android:text="@{listContent.lectureTitle}"
+            android:text="@{listContent.classTitle}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

@@ -53,14 +53,13 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun fetchDataFromEcampus() {
-        val userAgent =
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_16_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36"
+
 
         progressDialog.show()
         addToDisposable(
             Single.fromCallable {
                 Jsoup.connect(GlobalConstants.ECAMPUS_MAIN_URL)
-                    .userAgent(userAgent)
+                    .userAgent(GlobalConstants.USERAGENT)
                     .data(
                         "Accept",
                         "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
@@ -95,7 +94,7 @@ class HomeFragment : BaseFragment() {
                             professor = professor.substring(professor.lastIndexOf(" "))
                         // 교수 이름이 존재 하지 않을때 처리
                         if (professor.isNotEmpty())
-                            professors.add(professor)
+                            professors.add(professor.trim())
                         else
                             professors.add(" ")
                     }
@@ -105,10 +104,14 @@ class HomeFragment : BaseFragment() {
                         it.attr("href")
                     }
 
+                    classNames.forEachIndexed { index, s ->
+                        Log.d(TAG, "$s ${professors[index]}")
+                    }
+
                     // static 객체에 넣어줌
                     classNames.forEachIndexed { index, s ->
                         EcampusCacheUtil.mEcampusMain.classes.add(
-                            Class(s, professors[index + 1],links[index])
+                            Class(s, professors[index], links[index])
                         )
                     }
                 }, {
@@ -129,33 +132,42 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun initTodoItem() {
-        todoList.clear()
-        todoList.addAll(
-            listOf(
-                TodoViewModel(
-                    "11:10",
-                    "응용통계학",
-                    LectureType.TYPE_VIDEO,
-                    "[강의동영상] 11장 범주형 자료",
-                    ""
-                ),
-                TodoViewModel(
-                    "13:50",
-                    "컴퓨터구조",
-                    LectureType.TYPE_VIDEO,
-                    "11/06 화상강의",
-                    ""
-                ),
-                TodoViewModel(
-                    "23:59",
-                    "이산수학",
-                    LectureType.TYPE_VIDEO,
-                    "중간고사 대체과제",
-                    ""
-                )
-            )
+        addToDisposable(
+            Single.fromCallable {
+                Jsoup.connect(GlobalConstants.ECAMPUS_CALENDAR_URL)
+                    .userAgent(GlobalConstants.USERAGENT)
+                    .data(
+                        "Accept",
+                        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                    )
+                    .data("Host", "ecampus.kookmin.ac.kr")
+                    .data("Accept-Language", "ko-kr")
+                    .data("Accept-Encoding", "gzip, deflate")
+                    .data("Connection", "keep-alive")
+                    .cookies(loginPref.userCookie)
+                    .get()
+            }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ document ->
+                    todoList.clear()
+                    val events = document.select(".eventlist").first().children()
+                    events.forEachIndexed { index, element ->
+                        val classTitle = element.select(".course").text()
+                        val contentTitle = element.select(".referer a").text()
+                        todoList.add(
+                            TodoViewModel(
+                                "11:10",
+                            classTitle,
+                            LectureType.TYPE_VIDEO,
+                            contentTitle,
+                            ""))
+                        Log.d(TAG, "$index $classTitle $contentTitle")
+                    }
+                    todoAdapter.notifyDataSetChanged()
+                }, {
+
+                })
         )
-        todoAdapter.notifyDataSetChanged()
     }
 
 }

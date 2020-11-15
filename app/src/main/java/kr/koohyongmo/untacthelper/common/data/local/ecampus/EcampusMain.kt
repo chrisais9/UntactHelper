@@ -14,7 +14,7 @@ data class Class(
     val week: ArrayList<Week> = arrayListOf()
 )
 data class Week(
-    val lectures: List<Lecture>? = null // 주차별 수업들
+    val lectures: ArrayList<Lecture> = arrayListOf() // 주차별 수업들
 )
 data class Lecture(
     val title: String,
