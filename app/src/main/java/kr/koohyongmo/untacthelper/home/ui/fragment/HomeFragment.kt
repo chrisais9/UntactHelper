@@ -19,6 +19,7 @@ import kr.koohyongmo.untacthelper.common.data.local.ecampus.EcampusMain
 import kr.koohyongmo.untacthelper.common.data.local.ecampus.LectureType
 import kr.koohyongmo.untacthelper.common.data.local.sharedpreference.LoginPreference
 import kr.koohyongmo.untacthelper.common.ui.base.BaseFragment
+import kr.koohyongmo.untacthelper.databinding.ItemHeaderBinding
 import kr.koohyongmo.untacthelper.databinding.ItemHomeTodoBinding
 import kr.koohyongmo.untacthelper.home.viewmodel.TodoViewModel
 import org.jsoup.Jsoup
@@ -27,6 +28,8 @@ import org.jsoup.Jsoup
  * Created by KooHyongMo on 2020/09/19
  */
 class HomeFragment : BaseFragment() {
+
+    data class Header(val text: String)
 
     companion object {
         const val TAG = "HomeFragment"
@@ -43,7 +46,7 @@ class HomeFragment : BaseFragment() {
             setTitle("데이터 로드중")
         }
     }
-    private var todoList = ArrayList<TodoViewModel>()
+    private var todoList = ArrayList<Any>()
     private val todoAdapter by lazy {
         LastAdapter(todoList, BR.listContent)
     }
@@ -125,6 +128,7 @@ class HomeFragment : BaseFragment() {
     private fun initTodo() {
         rv_todo.layoutManager = LinearLayoutManager(requireContext())
         todoAdapter
+            .map<Header, ItemHeaderBinding>(R.layout.item_header)
             .map<TodoViewModel, ItemHomeTodoBinding>(R.layout.item_home_todo) {
                 onClick {
                     val redirectLink = it.binding.listContent!!.contentURL
@@ -136,6 +140,8 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun initTodoItem() {
+
+        todoList.clear()
         addToDisposable(
             Single.fromCallable {
                 Jsoup.connect(GlobalConstants.ECAMPUS_CALENDAR_URL)
@@ -153,20 +159,29 @@ class HomeFragment : BaseFragment() {
             }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ document ->
-                    todoList.clear()
+                    todoList.add(Header("오늘의 할 일"))
                     val events = document.select(".eventlist").first().children()
                     events.forEachIndexed { index, element ->
                         val classTitle = element.select(".course").text()
                         val contentTitle = element.select(".referer a").text()
                         val link = element.select(".referer a").attr("href")
+                        var startTime = ""
+                        if (element.select(".date").text().length <= 13) {
+                            startTime = element.select(".date").text()
+                            if (startTime.isNotEmpty()) startTime = startTime.substring(0, 5) // 10:25
+                        }
+
+                        if(index == 4) todoList.add(Header("예정된 할 일"))
+
                         todoList.add(
                             TodoViewModel(
-                                "11:10",
-                            classTitle,
-                            LectureType.TYPE_VIDEO,
-                            contentTitle,
-                            link))
-                        Log.d(TAG, "$index $classTitle $contentTitle")
+                                startTime,
+                                classTitle,
+                                LectureType.TYPE_VIDEO,
+                                contentTitle,
+                                link
+                            )
+                        )
                     }
                     todoAdapter.notifyDataSetChanged()
                 }, {

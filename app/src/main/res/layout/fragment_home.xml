@@ -56,11 +56,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="24sp"
-                    android:text="오늘의 할 일" />
+                    android:text="할 일" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_todo"
                     android:padding="16dp"
+                    android:overScrollMode="never"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
 

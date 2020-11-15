@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="listContent"
+            type="kr.koohyongmo.untacthelper.home.ui.fragment.HomeFragment.Header" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <TextView
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@{listContent.text}"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_orange_light"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
