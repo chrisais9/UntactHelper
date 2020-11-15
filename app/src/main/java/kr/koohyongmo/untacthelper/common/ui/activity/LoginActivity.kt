@@ -56,6 +56,10 @@ class LoginActivity : BaseActivity() {
                     })
             )
         }
+        if (!loginPreference.userCookie.isNullOrEmpty()) {
+            onFinishLogin()
+            return
+        }
         if (loginPreference.userID.isNotEmpty()
             && loginPreference.userPassword.isNotEmpty()) {
             et_id.setText(loginPreference.userID)

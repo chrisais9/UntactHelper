@@ -46,7 +46,7 @@ class LoginPreference private constructor(context: Context){
             edit.apply()
         }
 
-    var userCookie: Map<String, String>
+    var userCookie: Map<String, String>?
         get() {
             val raw = pref.getString(USER_LOGIN_COOKIE, "").toString()
             val type = object : TypeToken<HashMap<String, String>>() {}.type

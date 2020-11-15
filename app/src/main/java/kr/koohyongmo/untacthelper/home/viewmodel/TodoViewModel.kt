@@ -9,5 +9,6 @@ data class TodoViewModel(
     val time: String,
     val lectureTitle: String,
     val lectureType: LectureType,
-    val contentTitle: String
+    val contentTitle: String,
+    val contentURL: String
 )
