@@ -8,7 +8,7 @@ import com.github.tlaabs.timetableview.Time
 
 // Kcard - 나의 수업 목록에서 조회되는 내용
 data class KcardClass(
-    val Classes: List<Class>
+    val classes: List<Class>
 )
 
 data class Class(
