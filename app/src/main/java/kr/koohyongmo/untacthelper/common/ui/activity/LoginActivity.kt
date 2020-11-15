@@ -5,6 +5,7 @@ import android.content.Intent
 import android.text.InputType
 import android.util.Log
 import android.widget.Toast
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
@@ -23,6 +24,7 @@ class LoginActivity : BaseActivity() {
         get() = 0
 
     private val loginPreference by lazy { LoginPreference.getInstance() }
+    val ecampusService = JsoupEcampusService()
 
     private val progressDialog by lazy {
         ProgressDialog(this).apply {
@@ -31,7 +33,6 @@ class LoginActivity : BaseActivity() {
     }
 
     override fun initLayoutAttributes() {
-        val ecampusService = JsoupEcampusService()
 
         et_password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
 

@@ -1,6 +1,8 @@
 package kr.koohyongmo.untacthelper.home.ui.fragment
 
 import android.app.ProgressDialog
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.nitrico.lastadapter.LastAdapter
@@ -124,8 +126,10 @@ class HomeFragment : BaseFragment() {
         rv_todo.layoutManager = LinearLayoutManager(requireContext())
         todoAdapter
             .map<TodoViewModel, ItemHomeTodoBinding>(R.layout.item_home_todo) {
-                onBind {
-                    Log.d(TAG, "onBind")
+                onClick {
+                    val redirectLink = it.binding.listContent!!.contentURL
+                    Log.d(TAG, redirectLink)
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(redirectLink)))
                 }
             }
             .into(rv_todo)
@@ -154,13 +158,14 @@ class HomeFragment : BaseFragment() {
                     events.forEachIndexed { index, element ->
                         val classTitle = element.select(".course").text()
                         val contentTitle = element.select(".referer a").text()
+                        val link = element.select(".referer a").attr("href")
                         todoList.add(
                             TodoViewModel(
                                 "11:10",
                             classTitle,
                             LectureType.TYPE_VIDEO,
                             contentTitle,
-                            ""))
+                            link))
                         Log.d(TAG, "$index $classTitle $contentTitle")
                     }
                     todoAdapter.notifyDataSetChanged()
