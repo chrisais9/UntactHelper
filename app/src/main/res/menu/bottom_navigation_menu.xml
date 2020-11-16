@@ -15,4 +15,10 @@
         android:enabled="true"
         android:icon="@drawable/ic_timetable"
         android:title="@string/bottom_nav_timetable"/>
+
+    <item
+        android:id="@+id/nav_calendar"
+        android:enabled="true"
+        android:icon="@drawable/ic_calendar"
+        android:title="캘린더"/>
 </menu>
