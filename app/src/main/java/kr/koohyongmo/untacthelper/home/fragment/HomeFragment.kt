@@ -4,7 +4,6 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import androidx.core.text.isDigitsOnly
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.nitrico.lastadapter.LastAdapter
 import io.reactivex.Single
@@ -17,7 +16,8 @@ import kr.koohyongmo.untacthelper.common.GlobalConstants
 import kr.koohyongmo.untacthelper.common.data.local.ecampus.*
 import kr.koohyongmo.untacthelper.common.data.local.sharedpreference.LoginPreference
 import kr.koohyongmo.untacthelper.common.ui.base.BaseFragment
-import kr.koohyongmo.untacthelper.databinding.ItemHomeTodoBinding
+import kr.koohyongmo.untacthelper.databinding.ItemHomeFutureTodoBinding
+import kr.koohyongmo.untacthelper.databinding.ItemHomeTodayTodoBinding
 import kr.koohyongmo.untacthelper.home.viewmodel.FutureTodoViewModel
 import kr.koohyongmo.untacthelper.home.viewmodel.TodayTodoViewModel
 import org.jsoup.Jsoup
@@ -49,7 +49,7 @@ class HomeFragment : BaseFragment() {
 
     private var futureTodoList = ArrayList<Any>()
     private val futureTodoAdapter by lazy {
-        LastAdapter(todayTodoList, BR.listContent)
+        LastAdapter(futureTodoList, BR.listContent)
     }
 
     override fun initLayoutAttributes() {
@@ -116,7 +116,7 @@ class HomeFragment : BaseFragment() {
                     }
 
                     links.forEachIndexed { classIndex, link ->
-                        if (classIndex == 1)fetchLectureData(classIndex, link)
+                        if (classIndex == 1) fetchLectureData(classIndex, link, classNames[classIndex])
                     }
                 }, {
                     Log.d(TAG, it.localizedMessage)
@@ -124,7 +124,7 @@ class HomeFragment : BaseFragment() {
         )
     }
 
-    private fun fetchLectureData(classIndex: Int, classUrl: String) {
+    private fun fetchLectureData(classIndex: Int, classUrl: String, className: String) {
         addToDisposable(
             Single.fromCallable {
                 Jsoup.connect(classUrl)
@@ -145,44 +145,47 @@ class HomeFragment : BaseFragment() {
                 .subscribe({
 
 
-                    it.body().select(".total_sections .weeks.ubsweeks li .content").forEachIndexed {index,  contents ->
-                        if (contents.select(".sectionname").text()[0].isDigit()) {
-                            Log.d(TAG, contents.select(".sectionname").text())
+                    it.body().select(".total_sections .weeks.ubsweeks li .content")
+                        .forEachIndexed { index, contents ->
+                            if (contents.select(".sectionname").text()[0].isDigit()) {
 
 //                            Log.d(TAG, contents.select(".sectionname").text().substring(0,2))
-                            val weekNumber = if (contents.select(".sectionname").text().substring(0,2)[0].isDigit()
-                                && contents.select(".sectionname").text().substring(0,2)[1].isDigit()) {
-                                contents.select(".sectionname").text().substring(0, 2).toInt()
-                            }
-                            else {
-                                contents.select(".sectionname").text().substring(0, 1).toInt()
-                            }
+                                val weekNumber = if (contents.select(".sectionname").text()
+                                        .substring(0, 2)[0].isDigit()
+                                    && contents.select(".sectionname").text()
+                                        .substring(0, 2)[1].isDigit()
+                                ) {
+                                    contents.select(".sectionname").text().substring(0, 2).toInt()
+                                } else {
+                                    contents.select(".sectionname").text().substring(0, 1).toInt()
+                                } - 1
 
-                            EcampusCacheUtil.mEcampusMain.classes[classIndex].week.add(Week())
-                            EcampusCacheUtil.mEcampusMain.classes[classIndex].week.clear()
+                                EcampusCacheUtil.mEcampusMain.classes[classIndex].week.add(Week())
+                                EcampusCacheUtil.mEcampusMain.classes[classIndex].week[weekNumber].lectures.clear()
 
-                            contents.select(".section.img-text li").forEach { section ->
-                                val title = section.select(".instancename").removeClass(".accesshide").text()
-                                val mode = when (section.select("img")
-                                    .attr("alt")) {
-                                    "화상강의" -> LectureType.TYPE_ZOOM
-                                    "콘텐츠제작도구" -> LectureType.TYPE_VIDEO
-                                    "과제" -> LectureType.TYPE_ASSIGNMENT
-                                    else -> LectureType.TYPE_FILE
-                                }
+                                contents.select(".section.img-text li").forEach { section ->
+                                    val title =
+                                        section.select(".instancename").removeClass(".accesshide")
+                                            .text()
+                                    val mode = when (section.select("img")
+                                        .attr("alt")) {
+                                        "화상강의" -> LectureType.TYPE_ZOOM
+                                        "콘텐츠제작도구" -> LectureType.TYPE_VIDEO
+                                        "과제" -> LectureType.TYPE_ASSIGNMENT
+                                        else -> LectureType.TYPE_FILE
+                                    }
 
-                                val due = section.select(".displayoptions").text()
-                                var dueStart = ""
-                                var dueEnd = ""
-                                if (due.length >= 41) {
-                                    dueStart = due.substring(0, 19)
-                                    if (dueStart.substring(0,2) != "20")
-                                        dueStart = ""
-                                    dueEnd = due.substring(22, 41)
-                                    if (dueEnd.substring(0,2) != "20")
-                                        dueEnd = ""
-                                }
-                                try {
+                                    val due = section.select(".displayoptions").text()
+                                    var dueStart = ""
+                                    var dueEnd = ""
+                                    if (due.length >= 41) {
+                                        dueStart = due.substring(0, 19)
+                                        if (dueStart.substring(0, 2) != "20")
+                                            dueStart = ""
+                                        dueEnd = due.substring(22, 41)
+                                        if (dueEnd.substring(0, 2) != "20")
+                                            dueEnd = ""
+                                    }
                                     EcampusCacheUtil.mEcampusMain.classes[classIndex].week[weekNumber].lectures.add(
                                         Lecture(
                                             title,
@@ -191,13 +194,32 @@ class HomeFragment : BaseFragment() {
                                             dueEnd
                                         )
                                     )
-                                } catch (e: Exception) {
                                 }
+//                                if (EcampusCacheUtil.mEcampusMain.classes[classIndex].week[weekNumber].lectures.isNotEmpty())
+//                                    EcampusCacheUtil.mEcampusMain.classes[classIndex].week[weekNumber].lectures.sortedBy { lecture ->
+//                                        lecture.dueEnd
+//                                    }
+                            }
+
+                        }
+                    futureTodoList.clear()
+                    EcampusCacheUtil.mEcampusMain.classes[classIndex].week.forEach { week ->
+                        week.lectures.forEach { lecture ->
+                            if (lecture.dueEnd.isNotEmpty()) {
+                                futureTodoList.add(
+                                    FutureTodoViewModel(
+                                        lecture.dueEnd,
+                                        className,
+                                        lecture.type,
+                                        lecture.title,
+                                        ""
+                                    )
+                                )
                             }
                         }
-
                     }
-                },{
+                    futureTodoAdapter.notifyDataSetChanged()
+                }, {
                     Log.d(TAG, it.localizedMessage)
                 })
         )
@@ -206,7 +228,7 @@ class HomeFragment : BaseFragment() {
     private fun initTodo() {
         rv_today_todo.layoutManager = LinearLayoutManager(requireContext())
         todayTodoAdapter
-            .map<TodayTodoViewModel, ItemHomeTodoBinding>(R.layout.item_home_todo) {
+            .map<TodayTodoViewModel, ItemHomeTodayTodoBinding>(R.layout.item_home_today_todo) {
                 onClick {
                     val redirectLink = it.binding.listContent!!.contentURL
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(redirectLink)))
@@ -216,7 +238,7 @@ class HomeFragment : BaseFragment() {
 
         rv_future_todo.layoutManager = LinearLayoutManager(requireContext())
         futureTodoAdapter
-            .map<FutureTodoViewModel, ItemHomeTodoBinding>(R.layout.item_home_todo) {
+            .map<FutureTodoViewModel, ItemHomeFutureTodoBinding>(R.layout.item_home_future_todo) {
                 onClick {
                     val redirectLink = it.binding.listContent!!.contentURL
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(redirectLink)))
@@ -253,7 +275,8 @@ class HomeFragment : BaseFragment() {
                         var startTime = ""
                         if (element.select(".date").text().length <= 13) {
                             startTime = element.select(".date").text()
-                            if (startTime.isNotEmpty()) startTime = startTime.substring(0, 5) // 10:25
+                            if (startTime.isNotEmpty()) startTime =
+                                startTime.substring(0, 5) // 10:25
                         }
                         if (startTime.isEmpty()) return@forEachIndexed
                         todayTodoList.add(
