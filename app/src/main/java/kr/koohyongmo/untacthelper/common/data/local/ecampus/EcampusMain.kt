@@ -11,10 +11,10 @@ data class Class(
     val title: String, // 과목명
     val professor: String, // 교수명
     val link: String,
-    val week: ArrayList<Week> = arrayListOf()
+    var week: ArrayList<Week> = ArrayList()
 )
 data class Week(
-    val lectures: ArrayList<Lecture> = arrayListOf() // 주차별 수업들
+    var lectures: ArrayList<Lecture> = ArrayList()// 주차별 수업들
 )
 data class Lecture(
     val title: String,

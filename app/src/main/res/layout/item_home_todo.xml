@@ -5,7 +5,7 @@
     <data>
         <variable
             name="listContent"
-            type="kr.koohyongmo.untacthelper.home.viewmodel.TodoViewModel" />
+            type="kr.koohyongmo.untacthelper.home.viewmodel.TodayTodoViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -42,7 +42,7 @@
             android:layout_marginStart="12dp"
             app:layout_constraintTop_toTopOf="@id/tv_time"
             app:layout_constraintStart_toEndOf="@id/divider"
-            android:id="@+id/tv_title"
+            android:id="@+id/tv_today_title"
             android:text="@{listContent.classTitle}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -50,8 +50,8 @@
 
         <ImageView
             android:id="@+id/iv_type"
-            app:layout_constraintTop_toBottomOf="@id/tv_title"
-            app:layout_constraintStart_toStartOf="@id/tv_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_today_title"
+            app:layout_constraintStart_toStartOf="@id/tv_today_title"
             android:layout_marginBottom="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:src="@drawable/ic_main_logo"
@@ -62,7 +62,7 @@
             android:layout_marginStart="2dp"
             android:id="@+id/tv_description"
             android:text="@{listContent.contentTitle}"
-            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_today_title"
             app:layout_constraintStart_toEndOf="@id/iv_type"
             tools:text="[강의동영상] 11장 범주형 자료"
             android:layout_width="wrap_content"

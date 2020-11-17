@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.core.text.isDigitsOnly
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.nitrico.lastadapter.LastAdapter
 import io.reactivex.Single
@@ -13,23 +14,18 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kr.koohyongmo.untacthelper.BR
 import kr.koohyongmo.untacthelper.R
 import kr.koohyongmo.untacthelper.common.GlobalConstants
-import kr.koohyongmo.untacthelper.common.data.local.ecampus.Class
-import kr.koohyongmo.untacthelper.common.data.local.ecampus.EcampusCacheUtil
-import kr.koohyongmo.untacthelper.common.data.local.ecampus.EcampusMain
-import kr.koohyongmo.untacthelper.common.data.local.ecampus.LectureType
+import kr.koohyongmo.untacthelper.common.data.local.ecampus.*
 import kr.koohyongmo.untacthelper.common.data.local.sharedpreference.LoginPreference
 import kr.koohyongmo.untacthelper.common.ui.base.BaseFragment
-import kr.koohyongmo.untacthelper.databinding.ItemHeaderBinding
 import kr.koohyongmo.untacthelper.databinding.ItemHomeTodoBinding
-import kr.koohyongmo.untacthelper.home.viewmodel.TodoViewModel
+import kr.koohyongmo.untacthelper.home.viewmodel.FutureTodoViewModel
+import kr.koohyongmo.untacthelper.home.viewmodel.TodayTodoViewModel
 import org.jsoup.Jsoup
 
 /**
  * Created by KooHyongMo on 2020/09/19
  */
 class HomeFragment : BaseFragment() {
-
-    data class Header(val text: String)
 
     companion object {
         const val TAG = "HomeFragment"
@@ -46,9 +42,14 @@ class HomeFragment : BaseFragment() {
             setTitle("데이터 로드중")
         }
     }
-    private var todoList = ArrayList<Any>()
-    private val todoAdapter by lazy {
-        LastAdapter(todoList, BR.listContent)
+    private var todayTodoList = ArrayList<Any>()
+    private val todayTodoAdapter by lazy {
+        LastAdapter(todayTodoList, BR.listContent)
+    }
+
+    private var futureTodoList = ArrayList<Any>()
+    private val futureTodoAdapter by lazy {
+        LastAdapter(todayTodoList, BR.listContent)
     }
 
     override fun initLayoutAttributes() {
@@ -58,8 +59,6 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun fetchDataFromEcampus() {
-
-
         progressDialog.show()
         addToDisposable(
             Single.fromCallable {
@@ -109,15 +108,15 @@ class HomeFragment : BaseFragment() {
                         it.attr("href")
                     }
 
-                    classNames.forEachIndexed { index, s ->
-                        Log.d(TAG, "$s ${professors[index]}")
-                    }
-
                     // static 객체에 넣어줌
                     classNames.forEachIndexed { index, s ->
                         EcampusCacheUtil.mEcampusMain.classes.add(
                             Class(s, professors[index], links[index])
                         )
+                    }
+
+                    links.forEachIndexed { classIndex, link ->
+                        if (classIndex == 1)fetchLectureData(classIndex, link)
                     }
                 }, {
                     Log.d(TAG, it.localizedMessage)
@@ -125,23 +124,110 @@ class HomeFragment : BaseFragment() {
         )
     }
 
+    private fun fetchLectureData(classIndex: Int, classUrl: String) {
+        addToDisposable(
+            Single.fromCallable {
+                Jsoup.connect(classUrl)
+                    .userAgent(GlobalConstants.USERAGENT)
+                    .data(
+                        "Accept",
+                        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                    )
+                    .data("Host", "ecampus.kookmin.ac.kr")
+                    .data("Accept-Language", "ko-kr")
+                    .data("Accept-Encoding", "gzip, deflate, br")
+                    .data("Connection", "keep-alive")
+                    .cookies(loginPref.userCookie)
+                    .get()
+
+            }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+
+
+                    it.body().select(".total_sections .weeks.ubsweeks li .content").forEachIndexed {index,  contents ->
+                        if (contents.select(".sectionname").text()[0].isDigit()) {
+                            Log.d(TAG, contents.select(".sectionname").text())
+
+//                            Log.d(TAG, contents.select(".sectionname").text().substring(0,2))
+                            val weekNumber = if (contents.select(".sectionname").text().substring(0,2)[0].isDigit()
+                                && contents.select(".sectionname").text().substring(0,2)[1].isDigit()) {
+                                contents.select(".sectionname").text().substring(0, 2).toInt()
+                            }
+                            else {
+                                contents.select(".sectionname").text().substring(0, 1).toInt()
+                            }
+
+                            EcampusCacheUtil.mEcampusMain.classes[classIndex].week.add(Week())
+                            EcampusCacheUtil.mEcampusMain.classes[classIndex].week.clear()
+
+                            contents.select(".section.img-text li").forEach { section ->
+                                val title = section.select(".instancename").removeClass(".accesshide").text()
+                                val mode = when (section.select("img")
+                                    .attr("alt")) {
+                                    "화상강의" -> LectureType.TYPE_ZOOM
+                                    "콘텐츠제작도구" -> LectureType.TYPE_VIDEO
+                                    "과제" -> LectureType.TYPE_ASSIGNMENT
+                                    else -> LectureType.TYPE_FILE
+                                }
+
+                                val due = section.select(".displayoptions").text()
+                                var dueStart = ""
+                                var dueEnd = ""
+                                if (due.length >= 41) {
+                                    dueStart = due.substring(0, 19)
+                                    if (dueStart.substring(0,2) != "20")
+                                        dueStart = ""
+                                    dueEnd = due.substring(22, 41)
+                                    if (dueEnd.substring(0,2) != "20")
+                                        dueEnd = ""
+                                }
+                                try {
+                                    EcampusCacheUtil.mEcampusMain.classes[classIndex].week[weekNumber].lectures.add(
+                                        Lecture(
+                                            title,
+                                            mode,
+                                            dueStart,
+                                            dueEnd
+                                        )
+                                    )
+                                } catch (e: Exception) {
+                                }
+                            }
+                        }
+
+                    }
+                },{
+                    Log.d(TAG, it.localizedMessage)
+                })
+        )
+    }
+
     private fun initTodo() {
-        rv_todo.layoutManager = LinearLayoutManager(requireContext())
-        todoAdapter
-            .map<Header, ItemHeaderBinding>(R.layout.item_header)
-            .map<TodoViewModel, ItemHomeTodoBinding>(R.layout.item_home_todo) {
+        rv_today_todo.layoutManager = LinearLayoutManager(requireContext())
+        todayTodoAdapter
+            .map<TodayTodoViewModel, ItemHomeTodoBinding>(R.layout.item_home_todo) {
                 onClick {
                     val redirectLink = it.binding.listContent!!.contentURL
-                    Log.d(TAG, redirectLink)
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(redirectLink)))
                 }
             }
-            .into(rv_todo)
+            .into(rv_today_todo)
+
+        rv_future_todo.layoutManager = LinearLayoutManager(requireContext())
+        futureTodoAdapter
+            .map<FutureTodoViewModel, ItemHomeTodoBinding>(R.layout.item_home_todo) {
+                onClick {
+                    val redirectLink = it.binding.listContent!!.contentURL
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(redirectLink)))
+                }
+            }
+            .into(rv_future_todo)
     }
 
     private fun initTodoItem() {
 
-        todoList.clear()
+        todayTodoList.clear()
         addToDisposable(
             Single.fromCallable {
                 Jsoup.connect(GlobalConstants.ECAMPUS_CALENDAR_URL)
@@ -159,7 +245,6 @@ class HomeFragment : BaseFragment() {
             }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ document ->
-                    todoList.add(Header("오늘의 할 일"))
                     val events = document.select(".eventlist").first().children()
                     events.forEachIndexed { index, element ->
                         val classTitle = element.select(".course").text()
@@ -170,11 +255,9 @@ class HomeFragment : BaseFragment() {
                             startTime = element.select(".date").text()
                             if (startTime.isNotEmpty()) startTime = startTime.substring(0, 5) // 10:25
                         }
-
-                        if(index == 4) todoList.add(Header("예정된 할 일"))
-
-                        todoList.add(
-                            TodoViewModel(
+                        if (startTime.isEmpty()) return@forEachIndexed
+                        todayTodoList.add(
+                            TodayTodoViewModel(
                                 startTime,
                                 classTitle,
                                 LectureType.TYPE_VIDEO,
@@ -183,7 +266,7 @@ class HomeFragment : BaseFragment() {
                             )
                         )
                     }
-                    todoAdapter.notifyDataSetChanged()
+                    todayTodoAdapter.notifyDataSetChanged()
                 }, {
 
                 })

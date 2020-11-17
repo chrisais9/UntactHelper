@@ -59,7 +59,7 @@ class LoginActivity : BaseActivity() {
                         onFinishLogin()
                     }
                 },{
-
+                    it.printStackTrace()
                 })
         )
     }
