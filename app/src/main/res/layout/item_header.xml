@@ -3,7 +3,7 @@
     <data>
         <variable
             name="listContent"
-            type="kr.koohyongmo.untacthelper.home.ui.fragment.HomeFragment.Header" />
+            type="kr.koohyongmo.untacthelper.home.fragment.HomeFragment.Header" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"

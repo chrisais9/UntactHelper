@@ -3,11 +3,10 @@ package kr.koohyongmo.untacthelper.common.ui.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomnavigation.LabelVisibilityMode
 import kotlinx.android.synthetic.main.activity_main.*
 import kr.koohyongmo.untacthelper.R
-import kr.koohyongmo.untacthelper.home.ui.fragment.HomeFragment
+import kr.koohyongmo.untacthelper.home.fragment.HomeFragment
 import kr.koohyongmo.untacthelper.timetable.ui.fragment.TimetableFragment
 
 

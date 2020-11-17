@@ -1,4 +1,4 @@
-package kr.koohyongmo.untacthelper.home.ui.fragment
+package kr.koohyongmo.untacthelper.home.fragment
 
 import android.app.ProgressDialog
 import android.content.Intent
