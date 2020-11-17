@@ -21,6 +21,11 @@ import kr.koohyongmo.untacthelper.databinding.ItemHomeTodayTodoBinding
 import kr.koohyongmo.untacthelper.home.viewmodel.FutureTodoViewModel
 import kr.koohyongmo.untacthelper.home.viewmodel.TodayTodoViewModel
 import org.jsoup.Jsoup
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by KooHyongMo on 2020/09/19
@@ -115,8 +120,10 @@ class HomeFragment : BaseFragment() {
                         )
                     }
 
+
+                    futureTodoList.clear()
                     links.forEachIndexed { classIndex, link ->
-                        if (classIndex == 1) fetchLectureData(classIndex, link, classNames[classIndex])
+                        fetchLectureData(classIndex, link, classNames[classIndex])
                     }
                 }, {
                     Log.d(TAG, it.localizedMessage)
@@ -143,8 +150,6 @@ class HomeFragment : BaseFragment() {
             }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-
-
                     it.body().select(".total_sections .weeks.ubsweeks li .content")
                         .forEachIndexed { index, contents ->
                             if (contents.select(".sectionname").text()[0].isDigit()) {
@@ -202,19 +207,22 @@ class HomeFragment : BaseFragment() {
                             }
 
                         }
-                    futureTodoList.clear()
                     EcampusCacheUtil.mEcampusMain.classes[classIndex].week.forEach { week ->
                         week.lectures.forEach { lecture ->
                             if (lecture.dueEnd.isNotEmpty()) {
-                                futureTodoList.add(
-                                    FutureTodoViewModel(
-                                        lecture.dueEnd,
-                                        className,
-                                        lecture.type,
-                                        lecture.title,
-                                        ""
+
+                                val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                                if (Date().time <= parser.parse(lecture.dueEnd)!!.time) {
+                                    futureTodoList.add(
+                                        FutureTodoViewModel(
+                                            lecture.dueEnd,
+                                            className,
+                                            lecture.type,
+                                            lecture.title,
+                                            ""
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }
