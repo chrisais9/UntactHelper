@@ -225,25 +225,36 @@ class HomeFragment : BaseFragment() {
                 }
 
             }
+
+        // 날짜 같은 항목들은 합치기 위한 로직을 위한 변수
+        var prevTime = 0L
+
+        // 이캠퍼스 과목 > 주차별 강의
         EcampusCacheUtil.mEcampusMain.classes[classIndex].week.forEach { week ->
             week.lectures.forEach { lecture ->
-                if (lecture.dueEnd.isNotEmpty()) {
 
+                // 마감기한이 있는 강의(과제)
+                if (lecture.dueEnd.isNotEmpty()) {
                     val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                     val itemTime = parser.parse(lecture.dueEnd)!!.time
                     if (Date().time <= itemTime) {
-                        futureTodoList.add(
-                            DateUtils.formatDateTime(
-                                requireContext(),
-                                itemTime,
-                                DateUtils.FORMAT_SHOW_DATE
-                                        or DateUtils.FORMAT_NO_YEAR
-                                        or DateUtils.FORMAT_SHOW_WEEKDAY
+
+                        // 날짜가 이전 항목과 다르면 날짜 UI에 표시
+                        if (prevTime != itemTime) {
+                            prevTime = itemTime
+                            futureTodoList.add(
+                                DateUtils.formatDateTime(
+                                    requireContext(),
+                                    itemTime,
+                                    DateUtils.FORMAT_SHOW_DATE
+                                            or DateUtils.FORMAT_NO_YEAR
+                                            or DateUtils.FORMAT_SHOW_WEEKDAY
+                                )
                             )
-                        )
+                        }
                         futureTodoList.add(
                             FutureTodoViewModel(
-                                "~${lecture.dueEnd.substring(11, 16)}",
+                                "~${lecture.dueEnd.substring(11, 16)}", // 2020-11-18 23:59 -> ~23:59
                                 className,
                                 lecture.type,
                                 lecture.title,
