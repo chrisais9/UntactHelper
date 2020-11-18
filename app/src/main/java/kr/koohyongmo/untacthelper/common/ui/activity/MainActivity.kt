@@ -7,7 +7,7 @@ import com.google.android.material.bottomnavigation.LabelVisibilityMode
 import kotlinx.android.synthetic.main.activity_main.*
 import kr.koohyongmo.untacthelper.R
 import kr.koohyongmo.untacthelper.home.ui.fragment.HomeFragment
-import kr.koohyongmo.untacthelper.calrendar.ui.fragment.CalendarFragment
+import kr.koohyongmo.untacthelper.calendar.ui.fragment.CalendarFragment
 import kr.koohyongmo.untacthelper.timetable.ui.fragment.TimetableFragment
 
 
