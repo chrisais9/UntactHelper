@@ -18,6 +18,9 @@ import kr.koohyongmo.untacthelper.R
 import kr.koohyongmo.untacthelper.common.GlobalConstants
 import kr.koohyongmo.untacthelper.common.data.local.ecampus.*
 import kr.koohyongmo.untacthelper.common.data.local.sharedpreference.LoginPreference
+import kr.koohyongmo.untacthelper.common.func.notification.NotificationHelper
+import kr.koohyongmo.untacthelper.common.func.notification.TimeService
+import kr.koohyongmo.untacthelper.common.ui.activity.MainActivity
 import kr.koohyongmo.untacthelper.common.ui.base.BaseFragment
 import kr.koohyongmo.untacthelper.databinding.ItemFutureTodoHeaderBinding
 import kr.koohyongmo.untacthelper.databinding.ItemHomeFutureTodoBinding
@@ -359,6 +362,9 @@ class HomeFragment : BaseFragment() {
             }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ document ->
+                    val timesToNotify = arrayListOf<String>()
+                    val namesToNotify = arrayListOf<String>()
+
                     val events = document.select(".eventlist").first().children()
                     events.forEachIndexed { index, element ->
                         // 강의 제목
@@ -397,8 +403,16 @@ class HomeFragment : BaseFragment() {
                                 link
                             )
                         )
-
+                        namesToNotify.add(contentTitle)
+                        timesToNotify.add(startTime)
                     }
+
+                    // 강의 자동알림 서비스 시작
+                    val intent = Intent(activity!!.applicationContext, TimeService::class.java)
+                        .putExtra("times", timesToNotify)
+                        .putExtra("names", namesToNotify)
+                    activity!!.stopService(intent)
+                    activity!!.startService(intent)
                     todayTodoAdapter.notifyDataSetChanged()
                 }, {
 

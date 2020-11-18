@@ -33,6 +33,8 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun isSessionAlive() {
+        if (loginPreference.userCookie.isNullOrEmpty())
+            return
         progressDialog.setTitle("세션 확인중...")
         progressDialog.show()
         addToDisposable(

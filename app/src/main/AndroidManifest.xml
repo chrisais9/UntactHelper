@@ -24,6 +24,7 @@
         </activity>
         <activity android:name=".common.ui.activity.MainActivity" />
         <activity android:name=".common.ui.activity.LoginActivity" />
+        <service android:name=".common.func.notification.TimeService"/>
     </application>
 
 </manifest>
