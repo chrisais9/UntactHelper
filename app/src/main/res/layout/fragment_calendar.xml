@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".timetable.ui.fragment.CalendarFragment" >
+    tools:context=".calrendar.ui.fragment.CalendarFragment" >
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -37,20 +37,20 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ScrollView
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="?attr/actionBarSize"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.prolificinteractive.materialcalendarview.MaterialCalendarView
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:mcv_showOtherDates="all"
             app:mcv_selectionColor="#00F"
-            />
+            app:mcv_showOtherDates="all" />
 
-    </ScrollView>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

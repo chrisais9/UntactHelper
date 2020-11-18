@@ -3,12 +3,11 @@ package kr.koohyongmo.untacthelper.common.ui.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomnavigation.LabelVisibilityMode
 import kotlinx.android.synthetic.main.activity_main.*
 import kr.koohyongmo.untacthelper.R
 import kr.koohyongmo.untacthelper.home.ui.fragment.HomeFragment
-import kr.koohyongmo.untacthelper.timetable.ui.fragment.CalendarFragment
+import kr.koohyongmo.untacthelper.calrendar.ui.fragment.CalendarFragment
 import kr.koohyongmo.untacthelper.timetable.ui.fragment.TimetableFragment
 
 
@@ -23,7 +22,8 @@ class MainActivity : AppCompatActivity() {
 
     val homeFragment = HomeFragment()
     val timetableFragment = TimetableFragment()
-    val calendarFragment = CalendarFragment()
+    val calendarFragment =
+        CalendarFragment()
 
     private fun initBottomNavigationView() {
         // 제목 항상 보이도록
