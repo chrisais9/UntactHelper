@@ -3,6 +3,7 @@ package kr.koohyongmo.untacthelper.home.fragment
 import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
+import android.text.format.DateUtils
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.nitrico.lastadapter.LastAdapter
@@ -16,14 +17,14 @@ import kr.koohyongmo.untacthelper.common.GlobalConstants
 import kr.koohyongmo.untacthelper.common.data.local.ecampus.*
 import kr.koohyongmo.untacthelper.common.data.local.sharedpreference.LoginPreference
 import kr.koohyongmo.untacthelper.common.ui.base.BaseFragment
+import kr.koohyongmo.untacthelper.databinding.ItemFutureTodoHeaderBinding
 import kr.koohyongmo.untacthelper.databinding.ItemHomeFutureTodoBinding
 import kr.koohyongmo.untacthelper.databinding.ItemHomeTodayTodoBinding
 import kr.koohyongmo.untacthelper.home.viewmodel.FutureTodoViewModel
 import kr.koohyongmo.untacthelper.home.viewmodel.TodayTodoViewModel
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -85,50 +86,53 @@ class HomeFragment : BaseFragment() {
                 .doFinally { progressDialog.dismiss() }
                 .subscribe({ document ->
                     Log.d(TAG, document.html())
-                    EcampusCacheUtil.mEcampusMain = EcampusMain()
-
-                    // 수강 목록 가져오기
-                    val courses =
-                        document.body().select(".progress_courses .course_lists .my-course-lists")
-
-                    // 과목명, 교수명 가져오기
-                    val classNames = mutableListOf<String>()
-                    val professors = mutableListOf<String>()
-                    courses.select("div.course-title").forEachIndexed { index, it ->
-                        val className = it.text().substring(0, it.text().lastIndexOf(")") + 1)
-                        classNames.add(className)
-
-                        var professor = it.text().substring(it.text().lastIndexOf(")") + 1)
-                        if (professor.lastIndexOf(" ") != -1)
-                            professor = professor.substring(professor.lastIndexOf(" "))
-                        // 교수 이름이 존재 하지 않을때 처리
-                        if (professor.isNotEmpty())
-                            professors.add(professor.trim())
-                        else
-                            professors.add(" ")
-                    }
-
-                    // 수강과목별 하이퍼링크 가져오기
-                    val links = courses.select(".course_link").map {
-                        it.attr("href")
-                    }
-
-                    // static 객체에 넣어줌
-                    classNames.forEachIndexed { index, s ->
-                        EcampusCacheUtil.mEcampusMain.classes.add(
-                            Class(s, professors[index], links[index])
-                        )
-                    }
-
-
-                    futureTodoList.clear()
-                    links.forEachIndexed { classIndex, link ->
-                        fetchLectureData(classIndex, link, classNames[classIndex])
-                    }
+                    parseEcampusMain(document)
                 }, {
                     Log.d(TAG, it.localizedMessage)
                 })
         )
+    }
+
+    private fun parseEcampusMain(document: Document) {
+        EcampusCacheUtil.mEcampusMain = EcampusMain()
+
+        // 수강 목록 가져오기
+        val courses =
+            document.body().select(".progress_courses .course_lists .my-course-lists")
+
+        // 과목명, 교수명 가져오기
+        val classNames = mutableListOf<String>()
+        val professors = mutableListOf<String>()
+        courses.select("div.course-title").forEachIndexed { index, it ->
+            val className = it.text().substring(0, it.text().lastIndexOf(")") + 1)
+            classNames.add(className)
+
+            var professor = it.text().substring(it.text().lastIndexOf(")") + 1)
+            if (professor.lastIndexOf(" ") != -1)
+                professor = professor.substring(professor.lastIndexOf(" "))
+            // 교수 이름이 존재 하지 않을때 처리
+            if (professor.isNotEmpty())
+                professors.add(professor.trim())
+            else
+                professors.add(" ")
+        }
+
+        // 수강과목별 하이퍼링크 가져오기
+        val links = courses.select(".course_link").map {
+            it.attr("href")
+        }
+
+        // static 객체에 넣어줌
+        classNames.forEachIndexed { index, s ->
+            EcampusCacheUtil.mEcampusMain.classes.add(
+                Class(s, professors[index], links[index])
+            )
+        }
+
+        futureTodoList.clear()
+        links.forEachIndexed { classIndex, link ->
+            fetchLectureData(classIndex, link, classNames[classIndex])
+        }
     }
 
     private fun fetchLectureData(classIndex: Int, classUrl: String, className: String) {
@@ -150,87 +154,99 @@ class HomeFragment : BaseFragment() {
             }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    it.body().select(".total_sections .weeks.ubsweeks li .content")
-                        .forEachIndexed { index, contents ->
-                            if (contents.select(".sectionname").text()[0].isDigit()) {
-
-//                            Log.d(TAG, contents.select(".sectionname").text().substring(0,2))
-                                val weekNumber = if (contents.select(".sectionname").text()
-                                        .substring(0, 2)[0].isDigit()
-                                    && contents.select(".sectionname").text()
-                                        .substring(0, 2)[1].isDigit()
-                                ) {
-                                    contents.select(".sectionname").text().substring(0, 2).toInt()
-                                } else {
-                                    contents.select(".sectionname").text().substring(0, 1).toInt()
-                                } - 1
-
-                                EcampusCacheUtil.mEcampusMain.classes[classIndex].week.add(Week())
-                                EcampusCacheUtil.mEcampusMain.classes[classIndex].week[weekNumber].lectures.clear()
-
-                                contents.select(".section.img-text li").forEach { section ->
-                                    val title =
-                                        section.select(".instancename").removeClass(".accesshide")
-                                            .text()
-                                    val mode = when (section.select("img")
-                                        .attr("alt")) {
-                                        "화상강의" -> LectureType.TYPE_ZOOM
-                                        "콘텐츠제작도구" -> LectureType.TYPE_VIDEO
-                                        "과제" -> LectureType.TYPE_ASSIGNMENT
-                                        else -> LectureType.TYPE_FILE
-                                    }
-
-                                    val due = section.select(".displayoptions").text()
-                                    var dueStart = ""
-                                    var dueEnd = ""
-                                    if (due.length >= 41) {
-                                        dueStart = due.substring(0, 19)
-                                        if (dueStart.substring(0, 2) != "20")
-                                            dueStart = ""
-                                        dueEnd = due.substring(22, 41)
-                                        if (dueEnd.substring(0, 2) != "20")
-                                            dueEnd = ""
-                                    }
-                                    EcampusCacheUtil.mEcampusMain.classes[classIndex].week[weekNumber].lectures.add(
-                                        Lecture(
-                                            title,
-                                            mode,
-                                            dueStart,
-                                            dueEnd
-                                        )
-                                    )
-                                }
-//                                if (EcampusCacheUtil.mEcampusMain.classes[classIndex].week[weekNumber].lectures.isNotEmpty())
-//                                    EcampusCacheUtil.mEcampusMain.classes[classIndex].week[weekNumber].lectures.sortedBy { lecture ->
-//                                        lecture.dueEnd
-//                                    }
-                            }
-
-                        }
-                    EcampusCacheUtil.mEcampusMain.classes[classIndex].week.forEach { week ->
-                        week.lectures.forEach { lecture ->
-                            if (lecture.dueEnd.isNotEmpty()) {
-
-                                val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                                if (Date().time <= parser.parse(lecture.dueEnd)!!.time) {
-                                    futureTodoList.add(
-                                        FutureTodoViewModel(
-                                            lecture.dueEnd,
-                                            className,
-                                            lecture.type,
-                                            lecture.title,
-                                            ""
-                                        )
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    futureTodoAdapter.notifyDataSetChanged()
+                    parseLectureData(it, classIndex, className)
                 }, {
                     Log.d(TAG, it.localizedMessage)
                 })
         )
+    }
+
+    private fun parseLectureData(document: Document, classIndex: Int, className: String) {
+        document.body().select(".total_sections .weeks.ubsweeks li .content")
+            .forEach { contents ->
+                if (contents.select(".sectionname").text()[0].isDigit()) {
+
+                    // 몇주차인지 받아옴
+                    val weekNumber = if (contents.select(".sectionname").text()
+                            .substring(0, 2)[0].isDigit()
+                        && contents.select(".sectionname").text()
+                            .substring(0, 2)[1].isDigit()
+                    ) {
+                        contents.select(".sectionname").text().substring(0, 2).toInt()
+                    } else {
+                        contents.select(".sectionname").text().substring(0, 1).toInt()
+                    } - 1
+
+                    EcampusCacheUtil.mEcampusMain.classes[classIndex].week.add(Week())
+                    EcampusCacheUtil.mEcampusMain.classes[classIndex].week[weekNumber].lectures.clear()
+
+                    contents.select(".section.img-text li").forEach { section ->
+                        val title =
+                            section.select(".instancename").removeClass(".accesshide")
+                                .text()
+
+                        // 강의 타입
+                        val mode = when (section.select("img")
+                            .attr("alt")) {
+                            "화상강의" -> LectureType.TYPE_ZOOM
+                            "콘텐츠제작도구" -> LectureType.TYPE_VIDEO
+                            "과제" -> LectureType.TYPE_ASSIGNMENT
+                            else -> LectureType.TYPE_FILE
+                        }
+
+                        // 시작 / 마감 기한
+                        val due = section.select(".displayoptions").text()
+                        var dueStart = ""
+                        var dueEnd = ""
+                        if (due.length >= 41) {
+                            dueStart = due.substring(0, 19)
+                            if (dueStart.substring(0, 2) != "20")
+                                dueStart = ""
+                            dueEnd = due.substring(22, 41)
+                            if (dueEnd.substring(0, 2) != "20")
+                                dueEnd = ""
+                        }
+
+                        // static 객체에 최종적으로 넣어줌
+                        EcampusCacheUtil.mEcampusMain.classes[classIndex].week[weekNumber].lectures.add(
+                            Lecture(
+                                title,
+                                mode,
+                                dueStart,
+                                dueEnd
+                            )
+                        )
+                    }
+                }
+
+            }
+        EcampusCacheUtil.mEcampusMain.classes[classIndex].week.forEach { week ->
+            week.lectures.forEach { lecture ->
+                if (lecture.dueEnd.isNotEmpty()) {
+
+                    // TODO 날짜 표시하는 헤더 만들어야함
+                    val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    val itemTime = parser.parse(lecture.dueEnd)!!.time
+                    if (Date().time <= itemTime) {
+                        futureTodoList.add(DateUtils.formatDateTime(
+                            requireContext(),
+                            itemTime,
+                            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR)
+                        )
+                        futureTodoList.add(
+                            FutureTodoViewModel(
+                                "~${lecture.dueEnd.substring(11, 16)}",
+                                className,
+                                lecture.type,
+                                lecture.title,
+                                ""
+                            )
+                        )
+                    }
+                }
+            }
+        }
+        futureTodoAdapter.notifyDataSetChanged()
     }
 
     private fun initTodo() {
@@ -246,6 +262,7 @@ class HomeFragment : BaseFragment() {
 
         rv_future_todo.layoutManager = LinearLayoutManager(requireContext())
         futureTodoAdapter
+            .map<String, ItemFutureTodoHeaderBinding>(R.layout.item_future_todo_header)
             .map<FutureTodoViewModel, ItemHomeFutureTodoBinding>(R.layout.item_home_future_todo) {
                 onClick {
                     val redirectLink = it.binding.listContent!!.contentURL
