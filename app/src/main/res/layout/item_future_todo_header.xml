@@ -17,12 +17,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{listContent}"
+            android:textColor="#383838"
+            android:fontFamily="@font/nanum_square_round_l"
             android:textSize="15sp"
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
+            android:layout_marginTop="2dp"
             android:layout_width="match_parent"
-            android:layout_height="2.5dp"
+            android:layout_height="0.5dp"
             android:background="@android:color/darker_gray"
             app:layout_constraintTop_toBottomOf="@id/tv_header" />
 

@@ -12,14 +12,17 @@
         android:layout_width="match_parent"
         android:background="?android:attr/selectableItemBackground"
         android:layout_height="wrap_content"
+        android:paddingTop="4dp"
         android:paddingBottom="6dp">
 
         <TextView
+            android:fontFamily="@font/nanum_square_round_l"
             android:id="@+id/tv_time"
+            android:textColor="#383838"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{listContent.dueTime}"
-            android:textSize="18sp"
+            android:textSize="12sp"
             android:layout_marginTop="4dp"
             android:layout_marginStart="4dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -27,9 +30,10 @@
             tools:text="~11:30" />
 
         <TextView
+            android:fontFamily="@font/nanum_square_round_l"
             tools:text="응용통계학"
-            android:textSize="17sp"
-            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="#383838"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="7dp"
             app:layout_constraintTop_toTopOf="@id/tv_time"
@@ -45,17 +49,21 @@
             app:layout_constraintTop_toBottomOf="@id/tv_today_title"
             app:layout_constraintStart_toStartOf="@id/tv_today_title"
             android:layout_marginBottom="12dp"
+            android:layout_marginTop="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:src="@drawable/ic_main_logo"
-            android:layout_width="20dp"
-            android:layout_height="20dp"/>
+            android:layout_width="14dp"
+            android:layout_height="14dp"/>
 
         <TextView
+            android:fontFamily="@font/nanum_square_round_l"
             android:layout_marginStart="2dp"
             android:id="@+id/tv_description"
+            android:textColor="#383838"
             android:text="@{listContent.contentTitle}"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_today_title"
+            app:layout_constraintTop_toTopOf="@id/iv_type"
             app:layout_constraintStart_toEndOf="@id/iv_type"
             tools:text="[강의동영상] 11장 범주형 자료"
             android:layout_width="0dp"
