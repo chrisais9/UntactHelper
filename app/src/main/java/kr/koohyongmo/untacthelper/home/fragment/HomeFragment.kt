@@ -361,25 +361,43 @@ class HomeFragment : BaseFragment() {
                 .subscribe({ document ->
                     val events = document.select(".eventlist").first().children()
                     events.forEachIndexed { index, element ->
+                        // 강의 제목
                         val classTitle = element.select(".course").text()
+
+                        // 세부 사항
                         val contentTitle = element.select(".referer a").text()
+
+                        // 클릭 링크
                         val link = element.select(".referer a").attr("href")
+
+                        // 시작시간
                         var startTime = ""
                         if (element.select(".date").text().length <= 13) {
                             startTime = element.select(".date").text()
                             if (startTime.isNotEmpty()) startTime =
                                 startTime.substring(0, 5) // 10:25
                         }
+
+                        // 강의 타입
+                        val mode = when (element.select("img")
+                            .attr("title")) {
+                            "화상강의" -> LectureType.TYPE_ZOOM
+                            "콘텐츠제작도구" -> LectureType.TYPE_VIDEO
+                            "과제" -> LectureType.TYPE_ASSIGNMENT
+                            else -> LectureType.TYPE_FILE
+                        }
+
                         if (startTime.isEmpty()) return@forEachIndexed
                         todayTodoList.add(
                             TodayTodoViewModel(
                                 startTime,
                                 classTitle,
-                                LectureType.TYPE_VIDEO,
+                                mode,
                                 contentTitle,
                                 link
                             )
                         )
+
                     }
                     todayTodoAdapter.notifyDataSetChanged()
                 }, {
