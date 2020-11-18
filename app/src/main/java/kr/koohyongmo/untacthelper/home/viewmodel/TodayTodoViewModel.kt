@@ -5,9 +5,10 @@ import kr.koohyongmo.untacthelper.common.data.local.ecampus.LectureType
 /**
  * Created by KooHyongMo on 11/14/20
  */
-data class TodoViewModel(
+data class TodayTodoViewModel(
     val time: String,
-    val lectureTitle: String,
-    val lectureType: LectureType,
-    val contentTitle: String
+    val classTitle: String,
+    val contentType: LectureType,
+    val contentTitle: String,
+    val contentURL: String
 )

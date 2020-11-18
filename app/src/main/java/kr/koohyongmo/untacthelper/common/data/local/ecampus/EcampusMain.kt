@@ -4,23 +4,24 @@ package kr.koohyongmo.untacthelper.common.data.local.ecampus
  * Created by KooHyongMo on 2020/11/13
  */
 data class EcampusMain(
-    val lectures: List<Class>
+    val classes: ArrayList<Class> = arrayListOf()
 )
 
 data class Class(
     val title: String, // 과목명
-    val professor: String? = null, // 교수명
-    val classDivision: String? = null, // 분반 번호
-    val week: List<Week>? = null
+    val professor: String, // 교수명
+    val link: String,
+    var week: ArrayList<Week> = ArrayList()
 )
 data class Week(
-    val lectures: List<Lecture>? = null // 주차별 수업들
+    var lectures: ArrayList<Lecture> = ArrayList()// 주차별 수업들
 )
 data class Lecture(
     val title: String,
     val type: LectureType,
     val dueStart: String,
-    val dueEnd: String
+    val dueEnd: String,
+    val link: String
 )
 
 enum class LectureType {
