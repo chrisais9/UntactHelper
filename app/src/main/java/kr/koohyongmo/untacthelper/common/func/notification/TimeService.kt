@@ -7,8 +7,10 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Message
 import android.os.SystemClock
+import android.text.format.DateUtils
 import android.util.Log
 import kr.koohyongmo.untacthelper.common.ui.activity.MainActivity
+import java.util.*
 
 /**
  * Created by KooHyongMo on 11/19/20
@@ -19,11 +21,9 @@ class TimeService : Service() {
     }
 
     override fun onCreate() {
-        Log.d("service", "onCreate 실행")
     }
 
     override fun onDestroy() {
-        Log.d("service", "onDestroy 실행")
         mRunning = false
     }
 
@@ -39,19 +39,37 @@ class TimeService : Service() {
             )
         }
     }
-    protected var mRunning = false
+    private var mRunning = false
 
-    // 제일 중요한 메서드! (서비스 작동내용을 넣어준다.)
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Log.d("service", "onStartCommand 실행")
-        val time = intent.getIntExtra("time", 0)
+        val timesToNotify = intent.getStringArrayListExtra("times")!!
+        NotificationHelper.notification(
+            applicationContext,
+            "[비대리] 강의 알림",
+            "강의 시간이 되면 제가 알려드릴게요~!",
+            Intent(applicationContext, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
 
         // handler 통한 Thread 이용
         Thread(Runnable {
             mRunning = true
             while (mRunning) {
-                SystemClock.sleep(time * 1000.toLong())
-                mHandler.sendEmptyMessage(0)
+                SystemClock.sleep(1000.toLong())
+
+                val now = Date()
+                val calendar = Calendar.getInstance()
+                timesToNotify.forEach {
+                    calendar[Calendar.HOUR_OF_DAY] = it.substring(0,2).toInt()
+                    calendar[Calendar.MINUTE] = it.substring(3).toInt()
+                    calendar[Calendar.SECOND] = 0
+                    calendar[Calendar.MILLISECOND] = 0
+
+                    if (calendar.time.time - now.time <= 1000) {
+                        mHandler.sendEmptyMessage(0)
+                        stopSelf()
+                    }
+                }
             }
         }).start()
         return START_STICKY_COMPATIBILITY

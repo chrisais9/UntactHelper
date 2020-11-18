@@ -19,9 +19,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initBottomNavigationView()
-
-        val intent = Intent(this, TimeService::class.java)
-        startService(intent)
     }
 
     val homeFragment = HomeFragment()
