@@ -129,6 +129,7 @@ class HomeFragment : BaseFragment() {
             )
         }
 
+        // 과목 링크별로 내부 강의 파싱 시작
         futureTodoList.clear()
         links.forEachIndexed { classIndex, link ->
             fetchLectureData(classIndex, link, classNames[classIndex])
@@ -166,7 +167,7 @@ class HomeFragment : BaseFragment() {
             .forEach { contents ->
                 if (contents.select(".sectionname").text()[0].isDigit()) {
 
-                    // 몇주차인지 받아옴
+                    // N 주차
                     val weekNumber = if (contents.select(".sectionname").text()
                             .substring(0, 2)[0].isDigit()
                         && contents.select(".sectionname").text()
@@ -194,6 +195,9 @@ class HomeFragment : BaseFragment() {
                             else -> LectureType.TYPE_FILE
                         }
 
+                        // 강의별 링크
+                        val link = section.select("a").attr("href")
+
                         // 시작 / 마감 기한
                         val due = section.select(".displayoptions").text()
                         var dueStart = ""
@@ -213,7 +217,8 @@ class HomeFragment : BaseFragment() {
                                 title,
                                 mode,
                                 dueStart,
-                                dueEnd
+                                dueEnd,
+                                link
                             )
                         )
                     }
@@ -242,7 +247,7 @@ class HomeFragment : BaseFragment() {
                                 className,
                                 lecture.type,
                                 lecture.title,
-                                ""
+                                lecture.link
                             )
                         )
                     }

@@ -20,7 +20,8 @@ data class Lecture(
     val title: String,
     val type: LectureType,
     val dueStart: String,
-    val dueEnd: String
+    val dueEnd: String,
+    val link: String
 )
 
 enum class LectureType {
