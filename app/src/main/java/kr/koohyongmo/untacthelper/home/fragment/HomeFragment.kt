@@ -224,14 +224,17 @@ class HomeFragment : BaseFragment() {
             week.lectures.forEach { lecture ->
                 if (lecture.dueEnd.isNotEmpty()) {
 
-                    // TODO 날짜 표시하는 헤더 만들어야함
                     val parser = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                     val itemTime = parser.parse(lecture.dueEnd)!!.time
                     if (Date().time <= itemTime) {
-                        futureTodoList.add(DateUtils.formatDateTime(
-                            requireContext(),
-                            itemTime,
-                            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR)
+                        futureTodoList.add(
+                            DateUtils.formatDateTime(
+                                requireContext(),
+                                itemTime,
+                                DateUtils.FORMAT_SHOW_DATE
+                                        or DateUtils.FORMAT_NO_YEAR
+                                        or DateUtils.FORMAT_SHOW_WEEKDAY
+                            )
                         )
                         futureTodoList.add(
                             FutureTodoViewModel(
