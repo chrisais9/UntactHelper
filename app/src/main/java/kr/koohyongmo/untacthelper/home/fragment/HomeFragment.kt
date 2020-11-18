@@ -18,6 +18,8 @@ import kr.koohyongmo.untacthelper.R
 import kr.koohyongmo.untacthelper.common.GlobalConstants
 import kr.koohyongmo.untacthelper.common.data.local.ecampus.*
 import kr.koohyongmo.untacthelper.common.data.local.sharedpreference.LoginPreference
+import kr.koohyongmo.untacthelper.common.func.notification.NotificationHelper
+import kr.koohyongmo.untacthelper.common.ui.activity.MainActivity
 import kr.koohyongmo.untacthelper.common.ui.base.BaseFragment
 import kr.koohyongmo.untacthelper.databinding.ItemFutureTodoHeaderBinding
 import kr.koohyongmo.untacthelper.databinding.ItemHomeFutureTodoBinding
@@ -61,6 +63,8 @@ class HomeFragment : BaseFragment() {
     }
 
     override fun initLayoutAttributes() {
+
+
 
         // 툴바 현재 날짜로 설정
         toolbar_text.text = DateUtils.formatDateTime(
