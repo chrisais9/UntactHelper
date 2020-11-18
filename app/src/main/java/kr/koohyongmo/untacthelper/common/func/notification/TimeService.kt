@@ -10,6 +10,7 @@ import android.os.SystemClock
 import android.text.format.DateUtils
 import android.util.Log
 import kr.koohyongmo.untacthelper.common.ui.activity.MainActivity
+import java.lang.Math.abs
 import java.util.*
 
 /**
@@ -33,16 +34,21 @@ class TimeService : Service() {
             NotificationHelper.notification(
                 applicationContext,
                 "강의 들을 시간이에요~!",
-                "테스트 메세지",
+                namesToNotify[msg.arg1],
                 Intent(applicationContext, MainActivity::class.java)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             )
+
+            stopSelf()
         }
     }
     private var mRunning = false
+    var namesToNotify = arrayListOf<String>()
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val timesToNotify = intent.getStringArrayListExtra("times")!!
+        namesToNotify = intent.getStringArrayListExtra("names")!!
+
         NotificationHelper.notification(
             applicationContext,
             "[비대리] 강의 알림",
@@ -59,15 +65,16 @@ class TimeService : Service() {
 
                 val now = Date()
                 val calendar = Calendar.getInstance()
-                timesToNotify.forEach {
+                timesToNotify.forEachIndexed { index, it ->
                     calendar[Calendar.HOUR_OF_DAY] = it.substring(0,2).toInt()
                     calendar[Calendar.MINUTE] = it.substring(3).toInt()
                     calendar[Calendar.SECOND] = 0
                     calendar[Calendar.MILLISECOND] = 0
 
-                    if (calendar.time.time - now.time <= 1000) {
-                        mHandler.sendEmptyMessage(0)
-                        stopSelf()
+                    if (abs(calendar.time.time - now.time) <= 1000) {
+                        val message = Message()
+                        message.arg1 = index
+                        mHandler.sendMessage(message)
                     }
                 }
             }

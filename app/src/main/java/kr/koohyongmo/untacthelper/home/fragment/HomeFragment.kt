@@ -363,6 +363,7 @@ class HomeFragment : BaseFragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ document ->
                     val timesToNotify = arrayListOf<String>()
+                    val namesToNotify = arrayListOf<String>()
 
                     val events = document.select(".eventlist").first().children()
                     events.forEachIndexed { index, element ->
@@ -402,12 +403,14 @@ class HomeFragment : BaseFragment() {
                                 link
                             )
                         )
+                        namesToNotify.add(contentTitle)
                         timesToNotify.add(startTime)
                     }
 
                     // 강의 자동알림 서비스 시작
                     val intent = Intent(activity!!.applicationContext, TimeService::class.java)
                         .putExtra("times", timesToNotify)
+                        .putExtra("names", namesToNotify)
                     activity!!.stopService(intent)
                     activity!!.startService(intent)
                     todayTodoAdapter.notifyDataSetChanged()
