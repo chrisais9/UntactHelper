@@ -21,8 +21,8 @@
     </style>
 
     <style name="BottomBarText">
-        <item name="android:textSize">8sp</item>
-        <item name="android:fontFamily">@font/nanum_square_round_r</item>
+        <item name="android:textSize">9sp</item>
+        <item name="android:fontFamily">@font/nanum_square_round_b</item>
     </style>
 
 </resources>
