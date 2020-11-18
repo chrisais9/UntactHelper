@@ -2,6 +2,8 @@ package kr.koohyongmo.untacthelper.home.fragment
 
 import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.text.format.DateUtils
 import android.util.Log
@@ -59,6 +61,16 @@ class HomeFragment : BaseFragment() {
     }
 
     override fun initLayoutAttributes() {
+
+        // 툴바 현재 날짜로 설정
+        toolbar_text.text = DateUtils.formatDateTime(
+            requireContext(),
+            Date().time,
+            DateUtils.FORMAT_SHOW_DATE
+                    or DateUtils.FORMAT_NO_YEAR
+                    or DateUtils.FORMAT_SHOW_WEEKDAY
+        )
+
         initTodo()
         fetchDataFromEcampus()
         initTodoItem()
@@ -272,6 +284,26 @@ class HomeFragment : BaseFragment() {
         rv_today_todo.layoutManager = LinearLayoutManager(requireContext())
         todayTodoAdapter
             .map<TodayTodoViewModel, ItemHomeTodayTodoBinding>(R.layout.item_home_today_todo) {
+                onBind {
+                    when(it.binding.listContent!!.contentType) {
+                        LectureType.TYPE_FILE -> {
+                            it.binding.ivType.setImageResource(R.drawable.ic_attachment)
+//                            it.binding.ivType.setColorFilter(Color.parseColor("#ff3131"), PorterDuff.Mode.MULTIPLY)
+                        }
+                        LectureType.TYPE_VIDEO -> {
+                            it.binding.ivType.setImageResource(R.drawable.ic_video)
+                            it.binding.ivType.setColorFilter(Color.parseColor("#ff3131"), PorterDuff.Mode.MULTIPLY)
+                        }
+                        LectureType.TYPE_ZOOM -> {
+                            it.binding.ivType.setImageResource(R.drawable.ic_zoom)
+                            it.binding.ivType.setColorFilter(Color.parseColor("#2390dc"), PorterDuff.Mode.MULTIPLY)
+                        }
+                        LectureType.TYPE_ASSIGNMENT -> {
+                            it.binding.ivType.setImageResource(R.drawable.ic_assingment)
+                            it.binding.ivType.setColorFilter(Color.parseColor("#26df44"), PorterDuff.Mode.MULTIPLY)
+                        }
+                    }
+                }
                 onClick {
                     val redirectLink = it.binding.listContent!!.contentURL
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(redirectLink)))
@@ -283,6 +315,22 @@ class HomeFragment : BaseFragment() {
         futureTodoAdapter
             .map<String, ItemFutureTodoHeaderBinding>(R.layout.item_future_todo_header)
             .map<FutureTodoViewModel, ItemHomeFutureTodoBinding>(R.layout.item_home_future_todo) {
+                onBind {
+                    when(it.binding.listContent!!.contentType) {
+                        LectureType.TYPE_FILE -> {
+                            it.binding.ivType.setImageResource(R.drawable.ic_attachment)
+                        }
+                        LectureType.TYPE_VIDEO -> {
+                            it.binding.ivType.setImageResource(R.drawable.ic_video)
+                        }
+                        LectureType.TYPE_ZOOM -> {
+                            it.binding.ivType.setImageResource(R.drawable.ic_zoom)
+                        }
+                        LectureType.TYPE_ASSIGNMENT -> {
+                            it.binding.ivType.setImageResource(R.drawable.ic_assingment)
+                        }
+                    }
+                }
                 onClick {
                     val redirectLink = it.binding.listContent!!.contentURL
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(redirectLink)))
