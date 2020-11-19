@@ -10,6 +10,7 @@ import kr.koohyongmo.untacthelper.R
 import kr.koohyongmo.untacthelper.common.func.notification.TimeService
 import kr.koohyongmo.untacthelper.home.fragment.HomeFragment
 import kr.koohyongmo.untacthelper.calendar.ui.fragment.CalendarFragment
+import kr.koohyongmo.untacthelper.lecture.fragment.LectureFragment
 import kr.koohyongmo.untacthelper.timetable.ui.fragment.TimetableFragment
 
 
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     val homeFragment = HomeFragment()
     val timetableFragment = TimetableFragment()
     val calendarFragment = CalendarFragment()
-    val lectureFragment = Fragment()
+    val lectureFragment = LectureFragment()
 
     var activeFragment: Fragment = homeFragment
 
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         bottom_navigation.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_home -> setCurrentFragmentTab(homeFragment)
-                R.id.nav_lecture -> setCurrentFragmentTab(Fragment())
+                R.id.nav_lecture -> setCurrentFragmentTab(lectureFragment)
                 R.id.nav_timetable -> setCurrentFragmentTab(timetableFragment)
                 R.id.nav_calendar -> setCurrentFragmentTab(calendarFragment)
                 else -> throw Exception("Not defined id")
