@@ -22,18 +22,28 @@ class MainActivity : AppCompatActivity() {
         initBottomNavigationView()
     }
 
+
     val homeFragment = HomeFragment()
     val timetableFragment = TimetableFragment()
-    val calendarFragment =
-        CalendarFragment()
+    val calendarFragment = CalendarFragment()
+    val lectureFragment = Fragment()
+
+    var activeFragment: Fragment = homeFragment
 
     private fun initBottomNavigationView() {
+
+        supportFragmentManager.beginTransaction().apply {
+            add(R.id.frame_fragment_container, homeFragment, "home")
+            add(R.id.frame_fragment_container, timetableFragment, "timetable").hide(timetableFragment)
+            add(R.id.frame_fragment_container, calendarFragment, "calendar").hide(calendarFragment)
+            add(R.id.frame_fragment_container, lectureFragment, "calendar").hide(lectureFragment)
+        }.commit()
+
         // 제목 항상 보이도록
         bottom_navigation.labelVisibilityMode = LabelVisibilityMode.LABEL_VISIBILITY_LABELED
 
         // 기본적으로 첫화면은 Home 화면
         bottom_navigation.selectedItemId = R.id.nav_home
-        setCurrentFragmentTab(HomeFragment())
 
         // 탭 눌릴때 마다 해당 fragment로 화면 설정
         bottom_navigation.setOnNavigationItemSelectedListener {
@@ -51,7 +61,9 @@ class MainActivity : AppCompatActivity() {
     private fun setCurrentFragmentTab(fragment: Fragment) {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.frame_fragment_container, fragment)
+            .hide(activeFragment)
+            .show(fragment)
             .commitAllowingStateLoss()
+        activeFragment = fragment
     }
 }
