@@ -71,4 +71,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt 'com.android.databinding:compiler:GRADLE_PLUGIN_VERSION'
 
+    // circle progress
+    implementation 'com.github.lzyzsd:circleprogress:1.2.1'
+
 }

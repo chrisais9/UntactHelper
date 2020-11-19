@@ -6,7 +6,8 @@ import kotlinx.android.synthetic.main.fragment_lecture.*
 import kr.koohyongmo.untacthelper.BR
 import kr.koohyongmo.untacthelper.R
 import kr.koohyongmo.untacthelper.common.ui.base.BaseFragment
-import kr.koohyongmo.untacthelper.databinding.ItemFutureTodoHeaderBinding
+import kr.koohyongmo.untacthelper.databinding.ItemLectureBinding
+import kr.koohyongmo.untacthelper.lecture.viewmodel.LectureViewModel
 
 /**
  * Created by KooHyongMo on 11/19/20
@@ -23,9 +24,34 @@ class LectureFragment: BaseFragment() {
     override fun initLayoutAttributes() {
         rv_lecture.layoutManager = LinearLayoutManager(requireContext())
         lectureAdapter
-            .map<String, ItemFutureTodoHeaderBinding>(R.layout.item_lecture_header)
+            .map<LectureViewModel, ItemLectureBinding>(R.layout.item_lecture) {
+                onBind {
+                    it.binding.progress.progress = it.binding.listContent!!.percent
+                }
+            }
             .into(rv_lecture)
 
-        lectureList.add("[1주차]")
+        lectureList.add(
+            LectureViewModel(
+                "컴퓨터구조",
+                "임은진 교수님",
+                50
+            )
+        )
+        lectureList.add(
+            LectureViewModel(
+                "응용통계학",
+                "가나다 교수님",
+                32
+            )
+        )
+        lectureList.add(
+            LectureViewModel(
+                "모바일 프로그래밍",
+                "오우야 교수님",
+                96
+            )
+        )
+        lectureAdapter.notifyDataSetChanged()
     }
 }
