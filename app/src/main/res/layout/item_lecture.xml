@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="listContent"
+            type="kr.koohyongmo.untacthelper.lecture.viewmodel.LectureViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_marginTop="12dp"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardUseCompatPadding="true"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="13dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:padding="8dp">
+
+                <com.github.lzyzsd.circleprogress.ArcProgress
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:id="@+id/progress"
+                    android:layout_marginStart="12dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    app:arc_finished_color="@color/colorAccent"
+                    app:arc_unfinished_color="@android:color/white"
+                    app:arc_bottom_text="출석률"/>
+
+
+                <TextView
+                    android:layout_marginTop="12dp"
+                    android:layout_marginStart="18dp"
+                    android:id="@+id/tv_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/nanum_square_round_r"
+                    android:text="@{listContent.title}"
+                    android:textColor="#383838"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/progress"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="응용통계학" />
+
+                <TextView
+                    android:layout_marginTop="12dp"
+                    android:id="@+id/tv_professor"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="@{listContent.professor}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:fontFamily="@font/nanum_square_round_r"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="@id/tv_title"
+                    app:layout_constraintTop_toBottomOf="@id/tv_title"
+                    tools:text="구형모 교수님" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'realm-android'
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
@@ -70,5 +71,8 @@ dependencies {
     implementation 'com.github.nitrico.lastadapter:lastadapter:2.3.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt 'com.android.databinding:compiler:GRADLE_PLUGIN_VERSION'
+
+    // circle progress
+    implementation 'com.github.lzyzsd:circleprogress:1.2.1'
 
 }

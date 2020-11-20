@@ -33,7 +33,7 @@ class TimeService : Service() {
         override fun handleMessage(msg: Message) {
             NotificationHelper.notification(
                 applicationContext,
-                "강의 들을 시간이에요~!",
+                "예정된 할일이 있어요~!",
                 namesToNotify[msg.arg1],
                 Intent(applicationContext, MainActivity::class.java)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
