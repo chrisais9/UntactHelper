@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="24dp" >
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nanum_square_round_r"
+            android:paddingTop="5dp"
+            android:text="과목명"
+            android:textColor="#303030" />
+
+        <EditText
+            android:id="@+id/et_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nanum_square_round_r" />
+
+        <TextView
+            android:id="@+id/tv_professor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nanum_square_round_r"
+            android:paddingTop="15dp"
+            android:text="교수명"
+            android:textColor="#303030" />
+
+        <EditText
+            android:id="@+id/et_professor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nanum_square_round_r" />
+
+        <TextView
+            android:id="@+id/tv_place"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nanum_square_round_r"
+            android:paddingTop="15dp"
+            android:text="강의실"
+            android:textColor="#303030" />
+
+        <EditText
+            android:id="@+id/et_place"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nanum_square_round_r" />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nanum_square_round_r"
+            android:paddingTop="15dp"
+            android:text="강의시간"
+            android:textColor="#303030" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="15dp"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/sp_day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:entries="@array/time_table_header_title"
+                android:paddingRight="10dp" />
+
+            <EditText
+                android:id="@+id/et_hour1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nanum_square_round_r"
+                android:text="09" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nanum_square_round_r"
+                android:paddingTop="15dp"
+                android:text=" : "
+                android:textColor="#303030" />
+
+            <EditText
+                android:id="@+id/et_minute1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nanum_square_round_r"
+                android:text="00" />
+
+            <TextView
+                android:id="@+id/tv_colon2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:fontFamily="@font/nanum_square_round_r"
+                android:paddingTop="15dp"
+                android:text="~"
+                android:textColor="#303030" />
+
+            <EditText
+                android:id="@+id/et_hour2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nanum_square_round_r"
+                android:text="09" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nanum_square_round_r"
+                android:paddingTop="15dp"
+                android:text=" : "
+                android:textColor="#303030" />
+
+            <EditText
+                android:id="@+id/et_minute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nanum_square_round_r"
+                android:text="30" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:background="#c0d1dc"
+            android:fontFamily="@font/nanum_square_round_b"
+            android:text="확인" />
+
+    </LinearLayout>
+</LinearLayout>
