@@ -14,6 +14,7 @@ import kr.koohyongmo.untacthelper.common.rx.RxEvents
 import kr.koohyongmo.untacthelper.common.ui.base.BaseFragment
 import kr.koohyongmo.untacthelper.databinding.ItemLectureBinding
 import kr.koohyongmo.untacthelper.lecture.viewmodel.LectureViewModel
+import kotlin.random.Random
 
 
 /**
@@ -50,13 +51,14 @@ class LectureFragment : BaseFragment() {
 
     fun initLectureItem() {
         lectureList.clear()
-        EcampusCacheUtil.mEcampusMain.classes.forEach {
+        EcampusCacheUtil.mEcampusMain.classes.forEachIndexed { index, it ->
+            val percent = if (index <= 1) 0 else 85 + Random(it.hashCode()).nextInt(0,15)
             lectureList.add(
                 LectureViewModel(
                     it.title,
                     if (it.professor.isNotBlank()) "${it.professor} 교수님" else "",
                     it.link,
-                    50
+                    percent
                 )
             )
         }
