@@ -1,5 +1,7 @@
 package kr.koohyongmo.untacthelper.lecture.fragment
 
+import android.content.Intent
+import android.net.Uri
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.nitrico.lastadapter.LastAdapter
 import kotlinx.android.synthetic.main.fragment_lecture.*
@@ -33,6 +35,10 @@ class LectureFragment : BaseFragment() {
                 onBind {
                     it.binding.progress.progress = it.binding.listContent!!.percent
                 }
+                onClick {
+                    val redirectLink = it.binding.listContent!!.link
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(redirectLink)))
+                }
             }
             .into(rv_lecture)
         addToDisposable(
@@ -48,7 +54,8 @@ class LectureFragment : BaseFragment() {
             lectureList.add(
                 LectureViewModel(
                     it.title,
-                    it.professor,
+                    if (it.professor.isNotBlank()) "${it.professor} 교수님" else "",
+                    it.link,
                     50
                 )
             )
