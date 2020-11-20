@@ -20,6 +20,8 @@ import kr.koohyongmo.untacthelper.common.data.local.ecampus.*
 import kr.koohyongmo.untacthelper.common.data.local.sharedpreference.LoginPreference
 import kr.koohyongmo.untacthelper.common.func.notification.NotificationHelper
 import kr.koohyongmo.untacthelper.common.func.notification.TimeService
+import kr.koohyongmo.untacthelper.common.rx.RxBus
+import kr.koohyongmo.untacthelper.common.rx.RxEvents
 import kr.koohyongmo.untacthelper.common.ui.activity.MainActivity
 import kr.koohyongmo.untacthelper.common.ui.base.BaseFragment
 import kr.koohyongmo.untacthelper.databinding.ItemFutureTodoHeaderBinding
@@ -143,6 +145,8 @@ class HomeFragment : BaseFragment() {
                 Class(s, professors[index], links[index])
             )
         }
+
+        RxBus.publish(RxEvents.OnEcampusClassReady())
 
         // 과목 링크별로 내부 강의 파싱 시작
         futureTodoList.clear()
