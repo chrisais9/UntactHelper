@@ -29,6 +29,7 @@ class LectureFragment : BaseFragment() {
     private val lectureList = arrayListOf<Any>()
     private val lectureAdapter by lazy { LastAdapter(lectureList, BR.listContent) }
 
+    // 강의 목록 리스트 초기화
     override fun initLayoutAttributes() {
         rv_lecture.layoutManager = LinearLayoutManager(requireContext())
         lectureAdapter
@@ -49,6 +50,7 @@ class LectureFragment : BaseFragment() {
         )
     }
 
+    // 강의 목록 아이템 추가
     fun initLectureItem() {
         lectureList.clear()
         EcampusCacheUtil.mEcampusMain.classes.forEachIndexed { index, it ->
@@ -56,7 +58,7 @@ class LectureFragment : BaseFragment() {
             lectureList.add(
                 LectureViewModel(
                     it.title,
-                    if (it.professor.isNotBlank()) "${it.professor} 교수님" else "",
+                    if (it.professor.isNotBlank()) "${it.professor} 교수님" else "", // 교수명이 존재 하면 이름 끝에 교수님 추가
                     it.link,
                     percent
                 )

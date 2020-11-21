@@ -36,6 +36,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 /**
+ * 홈 화면
+ *
  * Created by KooHyongMo on 2020/09/19
  */
 class HomeFragment : BaseFragment() {
@@ -55,11 +57,14 @@ class HomeFragment : BaseFragment() {
             setTitle("데이터 로드중")
         }
     }
+
+    // 오늘의 할 일 리스트
     private var todayTodoList = ArrayList<Any>()
     private val todayTodoAdapter by lazy {
         LastAdapter(todayTodoList, BR.listContent)
     }
 
+    // 예정된 할 일 리스트
     private var futureTodoList = ArrayList<Any>()
     private val futureTodoAdapter by lazy {
         LastAdapter(futureTodoList, BR.listContent)
@@ -81,6 +86,8 @@ class HomeFragment : BaseFragment() {
         initTodoItem()
     }
 
+    // 이캠퍼스로 부터 로그인 세션 쿠키와 함께 데이터 받아옴
+    // RxJava + Jsoup
     private fun fetchDataFromEcampus() {
         progressDialog.show()
         addToDisposable(
@@ -110,6 +117,7 @@ class HomeFragment : BaseFragment() {
         )
     }
 
+    // 이캠퍼스 데이터 파싱
     private fun parseEcampusMain(document: Document) {
         EcampusCacheUtil.mEcampusMain = EcampusMain()
 
@@ -155,6 +163,8 @@ class HomeFragment : BaseFragment() {
         }
     }
 
+    // 이캠퍼스 메인화면 > 각 강의실 정보 받아오기
+    // RxJava + Jsoup
     private fun fetchLectureData(classIndex: Int, classUrl: String, className: String) {
         addToDisposable(
             Single.fromCallable {
@@ -181,6 +191,7 @@ class HomeFragment : BaseFragment() {
         )
     }
 
+    // 강의 정보 파싱
     private fun parseLectureData(document: Document, classIndex: Int, className: String) {
         document.body().select(".total_sections .weeks.ubsweeks li .content")
             .forEach { contents ->
@@ -287,11 +298,14 @@ class HomeFragment : BaseFragment() {
         futureTodoAdapter.notifyDataSetChanged()
     }
 
+    // UI 화면 초기화
     private fun initTodo() {
         rv_today_todo.layoutManager = LinearLayoutManager(requireContext())
         todayTodoAdapter
             .map<TodayTodoViewModel, ItemHomeTodayTodoBinding>(R.layout.item_home_today_todo) {
                 onBind {
+
+                    // 강의 타입 별로 다른 아이콘 적용
                     when(it.binding.listContent!!.contentType) {
                         LectureType.TYPE_FILE -> {
                             it.binding.ivType.setImageResource(R.drawable.ic_attachment)
@@ -320,7 +334,7 @@ class HomeFragment : BaseFragment() {
 
         rv_future_todo.layoutManager = LinearLayoutManager(requireContext())
         futureTodoAdapter
-            .map<String, ItemFutureTodoHeaderBinding>(R.layout.item_future_todo_header)
+            .map<String, ItemFutureTodoHeaderBinding>(R.layout.item_future_todo_header) // 날짜 헤더 부분 ex) 11월 24일 화요일
             .map<FutureTodoViewModel, ItemHomeFutureTodoBinding>(R.layout.item_home_future_todo) {
                 onBind {
                     when(it.binding.listContent!!.contentType) {
@@ -346,6 +360,8 @@ class HomeFragment : BaseFragment() {
             .into(rv_future_todo)
     }
 
+    // 오늘의 할 일 데이터 추가 (이캠퍼스 캘린더에서 받아옴)
+    // RxJava + Jsoup
     private fun initTodoItem() {
 
         todayTodoList.clear()

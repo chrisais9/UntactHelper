@@ -14,5 +14,5 @@ object RxBus {
 }
 
 class RxEvents() {
-    class OnEcampusClassReady
+    class OnEcampusClassReady // 이캠퍼스 수강 목록이 준비 되었다고 알려줌
 }

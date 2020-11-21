@@ -14,6 +14,8 @@ import java.lang.Math.abs
 import java.util.*
 
 /**
+ * 알림 보내기 서비스
+ * 백그라운드에서 동작함
  * Created by KooHyongMo on 11/19/20
  */
 class TimeService : Service() {

@@ -13,6 +13,8 @@ import kr.koohyongmo.untacthelper.R
 import java.util.*
 
 /**
+ * 쉽게 알림 보내주는 유틸
+ * 안드로이드 버젼별로 구현법이 다르므로 분기 되어있음
  * Created by KooHyongMo on 11/19/20
  */
 object NotificationHelper {
