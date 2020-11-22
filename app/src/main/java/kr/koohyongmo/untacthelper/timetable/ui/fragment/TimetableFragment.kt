@@ -14,7 +14,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 /**
- * Created by KooHyongMo on 11/14/20
+ * Created by KimMinJeong on 11/14/20
  */
 class TimetableFragment: BaseFragment() {
     override val layoutResourceID: Int
@@ -101,38 +101,36 @@ class TimetableFragment: BaseFragment() {
             timetable.add(schedules)
         }
 
+        //버튼 클릭 시 강의 추가 다이얼로그 띄움
         val addLectureBtn = btn_addLecture
-        addLectureBtn.setOnClickListener(View.OnClickListener {
+        addLectureBtn.setOnClickListener{
             val dialog = DialogAddFragment.DialogAddFragmentBuilder()
                 .create()
             dialog.show(activity!!.supportFragmentManager, dialog.tag)
-            addLecture()
-        })
+        }
     }
 
     //강의 추가
-    private fun addLecture() {
-        val title = "알바" // 강의명
-        val place = "맥도날드" // 강의실
-        val professor = "" // 교수명
-        // 강의 시간정보
-        val period = listOf(
-            Period(3, Time(13, 0), Time(14,0))
-        )
-
+    fun addLecture(
+        title: String,
+        place: String,
+        professor: String,
+        day: Int,
+        startHour: Int,
+        startMinute: Int,
+        endHour: Int,
+        endMinute: Int
+    ) {
         val schedules = ArrayList<Schedule>()
-        for(p in period) {
-            schedules.add(
-                Schedule().apply {
-                    classTitle = title
-                    classPlace = place
-                    professorName = professor
-                    day = p.day
-                    startTime = p.startTime
-                    endTime = p.endTime
-                }
-            )
-        }
+        schedules.add(
+            Schedule().apply {
+                classTitle = title // 강의명
+                classPlace = "$professor($place)" // 교수명(강의실)
+                this.day = day
+                startTime = Time(startHour, startMinute)
+                endTime = Time(endHour, endMinute)
+            }
+        )
         timetable.add(schedules)
     }
 }
