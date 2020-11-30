@@ -70,3 +70,62 @@
 - 현 학기에 수강중인 강의를 한눈에 볼 수 있음
 - 클릭하면 해당 과목으로 손쉽게 이동
 - 각 강의별로 출석률을 제공함. 단, 현재 통합인증 SSO 인증 업그레이드로 인하여 데이터 접근이 막힘 (추후 대응 예정)
+
+### 시간표
+
+<img src="images/timetable.png" alt="Markdownify" width="300"></a>
+
+- 수강중인 강의의 시간표를 보여줌
+- 날짜 정보를 이용해 자동으로 학기를 나타냄
+- 각 강의의 강의명, 교수명, 강의실 위치를 보여줌
+- 다만 현재 통합인증 SSO 인증 업그레이드로 인하여 데이터 접근이 불가함. 
+
+
+
+<img src="images/timetable_add_dialog.png" alt="Markdownify" width="300"></a>
+
+- 상단 왼쪽 + 버튼 클릭 시 다이얼로그 팝업창 뜸
+- 팝업창에 정보 작성
+
+
+
+<img src="images/timetable_timepicker.png" alt="Markdownify" width="300"></a>
+
+- 시간 선택은 spinner 를 활용하여 편리하도록 구현
+
+
+
+<img src="images/timetable_add_dialog2.png" alt="Markdownify" width="300"></a>
+
+- 이후 확인버튼 클릭 시 시간표에 강의가 추가됨
+
+
+
+<img src="images/timetable_add.png" alt="Markdownify" width="300"></a>
+
+- 강의가 시간표에 추가된 모습
+
+
+
+<img src="images/timetable_day.png" alt="Markdownify" width="300"></a>
+
+- 올바르지 않은 정보를 확인하여 추가할 수 있도록 함
+- 사진상의 내용은 올바른 요일을 선택하지 않음
+
+
+
+### 캘린더
+
+<img src="images/view_calendar.png" alt="Markdownify" width="300"></a>
+
+- ecampus 일정을 연동하여 캘린더에 표시함
+- 캘린더에 라벨로 일정 표시 가능
+- 다만 현재 일부 기능 미구현
+
+## 한계점
+
+프로젝트 시작 후 통합정보시스템 업데이트가 이루어지게 되면서, 당초 예상했던 방향과 프로젝트 계획이 틀어지게 되어 로그인등의 문제가 발생함.
+
+ecampus와 kcard 양쪽에서 정보를 얻어와야 정상적인 서비스 제공이 가능하나, 통합정보시스템이 업데이트 되면서 sso 연결 등 보안의 업데이트로 데이터 파싱이 불가능해져 일부 기능을 완성하지 못하였음.
+
+추후 api등을 요청하여 앱을 발전시켜보고자 함.
