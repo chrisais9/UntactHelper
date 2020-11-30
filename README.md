@@ -86,11 +86,6 @@
 
 - 상단 왼쪽 + 버튼 클릭 시 다이얼로그 팝업창 뜸
 - 팝업창에 정보 작성
-
-
-
-<img src="images/timetable_timepicker.png" alt="Markdownify" width="300"></a>
-
 - 시간 선택은 spinner 를 활용하여 편리하도록 구현
 
 
