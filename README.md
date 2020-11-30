@@ -4,6 +4,9 @@
   <br>
   비대리
   <h3 align="center"> 비대리 - 비대면 강의를 쉽고 체계적으로!</h3>
+  <h4 align="center">
+  <a href="https://github.com/chrisais9/UntactHelper/raw/master/ppt/모바일%20프로그래밍%20발표%20PPT.pdf">발표 자료 다운로드</a>
+  </h4>  
   <br>
 </h1>
 
